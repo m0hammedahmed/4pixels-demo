@@ -778,3 +778,12 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .prod-table { max-height: 640px; overflow-y: auto; }
 .prod-row.head { position: sticky; top: 0; z-index: 1; }
 @media (max-width: 700px) { .prod-table { max-height: 560px; } }
+
+/* v18 carts */
+.cart-bar { align-items: center; margin-bottom: 14px; } .cart-bar .grow { text-align: start; }
+.cart-top { align-items: stretch; } .cart-top > .card { display: flex; flex-direction: column; } .cart-top .lbl { display: block; margin: 14px 0 6px; font-size: 13px; font-weight: 600; color: #475569; }
+.cart-sw { margin: 14px 0 0; } .cart-top .var-row { margin-bottom: 10px; } .cart-top .btn-row { margin-top: auto !important; padding-top: 16px; }
+.cart-top .eyebrow { margin: 0 0 4px; }
+.cart-kpi .kpi { padding: 16px 18px; } .cart-kpi .kpi-v { font-size: 22px; white-space: nowrap; }
+@media (max-width: 700px) { .cart-bar { flex-wrap: wrap; } .cart-bar .grow { flex-basis: 100%; } }
+@media (max-width: 700px) { .cart-kpi > :last-child:nth-child(odd) { grid-column: 1 / -1; } }

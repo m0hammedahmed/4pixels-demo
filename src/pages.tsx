@@ -378,12 +378,11 @@ export function CartsPage({ lang, showToast }: P) {
   const rows = ORDERS.filter(o => o.source !== 'Shopify').slice(0, 10);
   return (
     <div>
-      <Head eyebrow="" title="Abandoned Checkouts" sub="Auto-send follows up on checkout drop-offs after the safe delay, skips completed orders, and keeps recovery tracking visible." right={<button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button>} />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo, no real file)')}>Export</button></div>
-      <div className="two-col-flex">
+      <div className="page-bar cart-bar"><span className="muted small grow">Auto-send follows up on checkout drop-offs after the safe delay and skips completed orders.</span><button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo, no real file)')}>Export</button></div>
+      <div className="two-col-flex cart-top">
         <div className="card card-pad grow">
           <p className="eyebrow">ABANDONED RECOVERY</p><h3 className="h3">Template, variables, preview</h3><p className="muted small">Choose the approved Meta template, map its variables, and save.</p>
-          <label className="switch-row"><input type="checkbox" checked={auto} onChange={e => setAuto(e.target.checked)} /> Auto-send {auto ? 'enabled' : 'disabled'}</label>
+          <label className="switch-row cart-sw"><input type="checkbox" checked={auto} onChange={e => setAuto(e.target.checked)} /> {auto ? 'Auto-send enabled' : 'Auto-send disabled'}</label>
           <label className="lbl">Meta template</label><select className="inp" value={tpl} onChange={e => setTpl(e.target.value)}>{['abandoned_checkout_recovery_ar_v3 (ar | APPROVED)', 'abandoned_checkout_recovery_en_v3 (en_US | APPROVED)', 'moon_abandoned_discount_ar (ar | APPROVED)'].map(x => <option key={x}>{x}</option>)}</select>
           <label className="lbl">Template variables · 2 variables</label>
           <div className="var-row"><code>{'{{1}}'}</code><select className="inp" value={v1} onChange={e => setV1(e.target.value)}>{vars.map(x => <option key={x}>{x}</option>)}</select></div>
@@ -393,7 +392,7 @@ export function CartsPage({ lang, showToast }: P) {
         <div className="card card-pad preview-card"><h3 className="h3">Live preview</h3><p className="muted small">This is the message shape after variables are filled.</p>
           <div className="wa-bubble"><div className="wa-img">🖼️ Customer's first abandoned product image</div><b>🛍️ Your cart is still waiting</b><p>Winter jacket is still in your cart 🤍<br />Use discount code DEMO10 and finish your order before stock runs out.</p><div className="wa-btn">Complete order</div><div className="wa-btn">Copy offer code</div></div></div>
       </div>
-      <div className="kpi-grid kpi-4" style={{ marginTop: 16 }}>{[['UNRECOVERED', '3,528', 'complete checkout history'], ['RECOVERED', '851', 'after becoming abandoned'], ['UNRECOVERED VALUE', '2,248,076.54 EGP', ''], ['READY NOW', '4', 'inside the recovery window'], ['MESSAGES SENT', '1,206', '']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
+      <div className="kpi-grid kpi-4 cart-kpi" style={{ marginTop: 14 }}>{[['UNRECOVERED', '3,528', 'complete checkout history'], ['RECOVERED', '851', 'after becoming abandoned'], ['UNRECOVERED VALUE', '2,248,076.54 EGP', ''], ['READY NOW', '4', 'inside the recovery window'], ['MESSAGES SENT', '1,206', '']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
       <div className="card" style={{ marginTop: 16 }}><div className="table-wrap"><table className="data"><thead><tr><th>Customer</th><th>Phone</th><th>Cart total</th><th>Status</th><th /></tr></thead><tbody>{rows.map((o, i) => <tr key={o.id}><td>{o.name}</td><td className="mono">{o.phone}</td><td>{fmtMoney(o.subtotal)}</td><td><span className={`chip ${i % 3 === 0 ? 'green' : i % 3 === 1 ? 'blue' : 'gold'}`}>{i % 3 === 0 ? 'Recovered' : i % 3 === 1 ? 'Message sent' : 'Ready now'}</span></td><td><button className="btn btn-ghost btn-sm" onClick={() => showToast('Recovery message sent')}>Send now</button></td></tr>)}</tbody></table></div></div>
     </div>
   );
