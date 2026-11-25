@@ -66,7 +66,7 @@ export default function App() {
   const t = useMemo(() => makeT(lang), [lang]);
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-  const ALIAS: Record<string, string> = { marketing: 'templates', offers: 'automations', 'smart-offers': 'automations', plan: 'billing', chat: 'chats' };
+  const ALIAS: Record<string, string> = { marketing: 'templates', offers: 'automations', 'smart-offers': 'automations', plan: 'billing', chat: 'chats', products: 'overview', 'products-report': 'overview' };
   const initial0 = (typeof location !== 'undefined' && location.hash.replace('#', '')) || 'home';
   const initial = ALIAS[initial0] || initial0;
   const [page, setPage] = useState<string>(initial === 'landing' ? 'home' : initial);
@@ -219,7 +219,6 @@ function Shell(props: {
       { k: 'sales', page: 'sales', icon: 'shopify', badge: 'EXACT' },
       { k: 'orders', page: 'orders', icon: 'orders' },
       { k: 'customers', page: 'customers', icon: 'inbox' },
-      { k: 'products', page: 'products', icon: 'cart' },
     ] },
     { g: 'growth', items: [
       { k: 'carts', page: 'carts', icon: 'cart' },

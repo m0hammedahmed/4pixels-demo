@@ -774,3 +774,7 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .pimg i::before { content: ""; position: absolute; left: 50%; top: -14px; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,.55); transform: translateX(-50%); }
 @media (max-width: 700px) { .pimg { width: 52px; height: 52px; } .prod-row { padding: 10px 14px; } }
 @media (max-width: 700px) { .prod-filters { grid-template-columns: 1fr 1fr; } .prod-filters select { grid-column: 1 / -1; } .prod-filters .btn { justify-content: center; } }
+.prod-head { margin-bottom: 12px; align-items: baseline; } .dash-cols .prod-page { min-width: 0; } .prod-table .prod-row:nth-child(n+9) { }
+.prod-table { max-height: 640px; overflow-y: auto; }
+.prod-row.head { position: sticky; top: 0; z-index: 1; }
+@media (max-width: 700px) { .prod-table { max-height: 560px; } }

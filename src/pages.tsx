@@ -92,16 +92,7 @@ export function DashboardPage({ lang, showToast, go }: P) {
         <div className="card kpi dark"><div className="small">All order value</div><div className="kpi-v">{fmtMoney(sum(() => true))}</div><div className="small op">Every status</div></div>
         <div className="card kpi blue"><div className="small">Requested Revenue</div><div className="kpi-v">{fmtMoney(sum(o => o.status === 'Pending' || o.status === 'Confirmed'))}</div><div className="small op">Pending and confirmed</div></div>
       </div>
-      <div className="dash-cols">
-        <div className="card card-pad"><h3 className="h3">Orders per day</h3><p className="muted small" style={{ margin: '2px 0 14px' }}>Last 14 days of the range</p>
-          <div className="daybars">{days.map((d, i) => <div key={i} className="daybar"><i style={{ height: `${(d.n / maxN) * 100}%` }} /><span>{d.d.getDate()}</span></div>)}</div></div>
-        <div className="card card-pad"><h3 className="h3">By status</h3><div className="brk" style={{ marginTop: 12 }}>
-          {stat.map(([k, v, c]) => <div className="brk-row" key={k}><span className={`dot d-${c}`} /><span className="grow">{k}</span><b>{v}</b></div>)}</div></div>
-      </div>
-      <div className="dash-cols">
-        <div className="card card-pad"><div className="row-between"><h3 className="h3">Top products</h3><div className="seg"><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>Revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>Quantity</button></div></div>
-          <div className="mini-list">{top.map(p => <div key={p.name} className="top-row"><div className="row-between"><span>{p.name}</span><b>{mode === 'revenue' ? fmtMoney(p.value) : p.qty}</b></div><div className="bar"><i className="d-blue" style={{ width: `${((mode === 'revenue' ? p.value : p.qty) / topMax) * 100}%` }} /></div></div>)}</div></div>
-      </div>
+      <div className="dash-cols"><ProductsPage lang={lang} showToast={showToast} go={go} embedded /></div>
     </div>
   );
 }
@@ -633,7 +624,7 @@ const PRODUCTS: [string, number, number, number][] = (() => {
   return mix.concat(ar).sort((a, b) => b[1] * b[3] - a[1] * a[3]);
 })();
 const HUES = Array.from({ length: 103 }, (_, i) => (i * 47 + 200) % 360);
-export function ProductsPage({ lang, showToast }: P) {
+export function ProductsPage({ lang, showToast, embedded }: P & { embedded?: boolean }) {
   const [mode, setMode] = useState<'Single Search' | 'Multi Search'>('Single Search');
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('No alphabetical sort');
@@ -643,11 +634,14 @@ export function ProductsPage({ lang, showToast }: P) {
   const nf = from ? parseInt(from, 10) : 0, nt = to ? parseInt(to, 10) : 1e9;
   let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i], lo: 12400 + (i * 9) % 90, hi: 12539 - (i * 4) % 60 })).filter(x => (!terms.length || terms.some(t => x.n.toLowerCase().includes(t))) && (isNaN(nf) || nf <= x.hi) && (isNaN(nt) || nt >= x.lo));
   if (sort === 'A to Z') list = [...list].sort((a, b) => a.n.localeCompare(b.n));
+  if (sort === 'Quantity: high to low') list = [...list].sort((a, b) => b.qty - a.qty);
+  if (sort === 'Value: high to low') list = [...list].sort((a, b) => b.v - a.v);
   if (sort === 'Z to A') list = [...list].sort((a, b) => b.n.localeCompare(a.n));
   const clear = () => { setQ(''); setSort('No alphabetical sort'); setFrom(''); setTo(''); };
   const f = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' LE';
   return (
     <div className="prod-page">
+      {embedded && <div className="row-between prod-head"><h3 className="h3">{tr(lang, 'Products report', 'تقرير المنتجات')}</h3><span className="muted small">{tr(lang, 'Top sellers in this range', 'الأكثر مبيعاً في الفترة')}</span></div>}
       <div className="prod-top">
         <div className="card prod-search">
           <div className="seg">{(['Single Search', 'Multi Search'] as const).map(m => <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{tr(lang, m, m === 'Single Search' ? 'بحث واحد' : 'بحث متعدد')}</button>)}</div>
@@ -656,7 +650,7 @@ export function ProductsPage({ lang, showToast }: P) {
         <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo, no real file)')}><I n="doc" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
       </div>
       <div className="card prod-filters">
-        <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['No alphabetical sort', 'A to Z', 'Z to A'].map(x => <option key={x}>{x}</option>)}</select>
+        <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['No alphabetical sort', 'A to Z', 'Z to A', 'Quantity: high to low', 'Value: high to low'].map(x => <option key={x}>{x}</option>)}</select>
         <input className="inp" placeholder="Order number from" value={from} onChange={e => setFrom(e.target.value)} />
         <input className="inp" placeholder="Order number to" value={to} onChange={e => setTo(e.target.value)} />
         <button className="btn btn-ghost" onClick={clear}>{tr(lang, 'Clear filters', 'مسح الفلاتر')}</button>
