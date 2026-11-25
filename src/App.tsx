@@ -903,20 +903,39 @@ function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; set
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('demo@store.com');
   const [pw, setPw] = useState('demo-password');
+  const [name, setName] = useState('');
+  const [store, setStore] = useState('');
+  const [show, setShow] = useState(false);
+  const su = tab === 'signup';
+  const pts: [string, string, string, string][] = [
+    ['One inbox for every WhatsApp chat', 'صندوق واحد لكل محادثات واتساب', 'Reply to customers and see their orders next to the conversation.', 'رد على العملاء وشوف أوردراتهم جنب المحادثة.'],
+    ['Connected to your Shopify store', 'متصل بمتجر Shopify', 'Orders, customers and products sync on their own.', 'الأوردرات والعملاء والمنتجات بتتزامن لوحدها.'],
+    ['Recover carts and win customers back', 'استرجع السلات والعملاء', 'Automatic reminders, offers and campaigns with approved templates.', 'تذكيرات وعروض وحملات تلقائية بقوالب معتمدة.'],
+  ];
   return (
     <AuthShell lang={lang} setLang={setLang} go={go}>
-      <div className="auth-card">
-        <div className="seg">
-          <button className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>{ar ? 'تسجيل دخول' : 'Login'}</button>
-          <button className={tab === 'signup' ? 'on' : ''} onClick={() => setTab('signup')}>{ar ? 'إنشاء حساب' : 'Create account'}</button>
+      <div className="auth-split">
+        <div className="auth-side">
+          <p className="eyebrow">{ar ? 'لمتاجر Shopify' : 'FOR SHOPIFY STORES'}</p>
+          <h2>{ar ? 'كل عملائك وأوردراتك ورسايل واتساب في مكان واحد' : 'Every customer, order and WhatsApp chat in one place'}</h2>
+          <ul>{pts.map(p => <li key={p[0]}><span className="tick"><I n="check" size={14} /></span><div><b>{ar ? p[1] : p[0]}</b><span>{ar ? p[3] : p[2]}</span></div></li>)}</ul>
+          <div className="auth-mini"><div><b>5 {ar ? 'دقايق' : 'min'}</b><span>{ar ? 'للإعداد' : 'to set up'}</span></div><div><b>{ar ? '7 أيام' : '7 days'}</b><span>{ar ? 'تجربة مجانية' : 'free trial'}</span></div><div><b>{ar ? 'بدون' : 'No'}</b><span>{ar ? 'كارت بنكي' : 'card needed'}</span></div></div>
         </div>
-        <p className="eyebrow">WORKSPACE ACCESS</p>
-        <h1>{tab === 'login' ? (ar ? 'أهلاً بيك تاني' : 'Welcome back') : (ar ? 'ابدأ تجربتك المجانية' : 'Start your free trial')}</h1>
-        <p className="muted">{tab === 'login' ? (ar ? 'اكتب الإيميل والباسورد وادخل على الـ CRM.' : 'Enter your email and password to go straight into the CRM.') : (ar ? 'حساب جديد في أقل من دقيقة، وبعدها تربط Shopify.' : 'A new account in under a minute, then connect Shopify.')}</p>
-        <div className="field"><label>{ar ? 'الإيميل' : 'Email address'}</label><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@store.com" /></div>
-        <div className="field"><label>{ar ? 'الباسورد' : 'Password'}</label><input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="Enter your password" /></div>
-        <button className="btn btn-primary btn-block" onClick={() => onDone(tab === 'signup')}>{tab === 'login' ? (ar ? 'دخول' : 'Sign in') : (ar ? 'إنشاء الحساب' : 'Create account')}</button>
-        <p className="small muted" style={{ marginTop: 14 }}>{ar ? 'ده ديمو: أي بيانات تدخل بيها شغالة.' : 'This is a demo: any details will work.'}</p>
+        <div className="auth-card">
+          <div className="seg">
+            <button className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>{ar ? 'تسجيل دخول' : 'Login'}</button>
+            <button className={tab === 'signup' ? 'on' : ''} onClick={() => setTab('signup')}>{ar ? 'إنشاء حساب' : 'Create account'}</button>
+          </div>
+          <h1>{su ? (ar ? 'ابدأ تجربتك المجانية' : 'Start your free trial') : (ar ? 'أهلاً بيك تاني' : 'Welcome back')}</h1>
+          <p className="muted">{su ? (ar ? 'حساب جديد في أقل من دقيقة، وبعدها تربط Shopify وواتساب.' : 'Create your account in under a minute, then connect Shopify and WhatsApp.') : (ar ? 'ادخل على مساحة عمل متجرك.' : 'Sign in to your store workspace.')}</p>
+          {su && <div className="field"><label>{ar ? 'الاسم' : 'Your name'}</label><input value={name} onChange={e => setName(e.target.value)} placeholder={ar ? 'مثال: أحمد' : 'e.g. Ahmed'} /></div>}
+          {su && <div className="field"><label>{ar ? 'اسم المتجر' : 'Store name'}</label><input value={store} onChange={e => setStore(e.target.value)} placeholder={ar ? 'مثال: متجر القاهرة' : 'e.g. Cairo Streetwear'} /></div>}
+          <div className="field"><label>{ar ? 'الإيميل' : 'Email address'}</label><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@store.com" /></div>
+          <div className="field"><div className="lab-row"><label>{ar ? 'الباسورد' : 'Password'}</label>{!su && <button type="button" className="link-btn" onClick={() => setShow(!show)}>{show ? (ar ? 'إخفاء' : 'Hide') : (ar ? 'إظهار' : 'Show')}</button>}</div><input type={show ? 'text' : 'password'} value={pw} onChange={e => setPw(e.target.value)} placeholder={ar ? 'الباسورد' : 'Enter your password'} /></div>
+          {su && <p className="small muted" style={{ margin: '-4px 0 12px' }}>{ar ? '8 حروف على الأقل.' : 'At least 8 characters.'}</p>}
+          <button className="btn btn-primary btn-block" onClick={() => onDone(su)}>{su ? (ar ? 'إنشاء الحساب' : 'Create account') : (ar ? 'دخول' : 'Sign in')}</button>
+          <p className="small muted" style={{ marginTop: 14, textAlign: 'center' }}>{su ? (ar ? 'الخطوة الجاية: ربط متجر Shopify ورقم واتساب.' : 'Next: connect your Shopify store and WhatsApp number.') : (ar ? 'ده ديمو: أي بيانات تدخل بيها شغالة.' : 'This is a demo: any details will work.')}</p>
+        </div>
       </div>
     </AuthShell>
   );
