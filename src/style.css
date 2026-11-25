@@ -817,3 +817,18 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .pub-nav .pub-auth-m .btn-primary { background: linear-gradient(135deg,#0284c7,#0ea5e9) !important; color: #fff !important; }
 .pub-nav .pub-auth-m .btn-ghost { background: #fff !important; color: #0f172a !important; border: 1px solid var(--border) !important; }
 @media (max-width: 900px) { .pub-head { background: rgba(255,255,255,.95) !important; } }
+/* v22 CTA + footer */
+.pub-cta-wrap { padding: 24px 32px 72px; }
+.pub-cta { max-width: 1116px; margin: 0 auto; border-radius: 28px; padding: 56px 32px; background: radial-gradient(500px 220px at 85% 0, rgba(255,255,255,.22), transparent 70%), linear-gradient(135deg,#0369a1,#0ea5e9); box-shadow: 0 24px 60px rgba(2,132,199,.25); }
+.pub-cta h2 { font-size: 32px !important; letter-spacing: -.5px; margin: 0 0 10px !important; }
+.pub-cta p { margin: 0 0 26px; color: rgba(255,255,255,.88); font-size: 16px; }
+.pub-cta .btn-row { justify-content: center; }
+.pub-cta .btn { padding: 12px 24px; font-size: 15px; border-radius: 100px; }
+.pub-cta .cta-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.7); } .pub-cta .cta-ghost:hover { background: rgba(255,255,255,.14); }
+.pub-foot { background: #0b1220 !important; padding: 64px 32px 28px !important; }
+.foot-grid h5 { font-size: 12px !important; letter-spacing: .08em; text-transform: uppercase; color: #7dd3fc !important; margin-bottom: 18px !important; }
+.foot-grid > div:not(.foot-brand) { gap: 12px !important; color: #cbd5e1; }
+.foot-brand .brand-row b { font-size: 17px; } .foot-brand p { margin-top: 14px; }
+.foot-bottom { border-top-color: #1e293b !important; }
+@media (max-width: 900px) { .pub-cta-wrap { padding: 16px 14px 48px; } .pub-cta { padding: 40px 20px; border-radius: 22px; } .pub-cta h2 { font-size: 24px !important; } .pub-foot { padding: 44px 18px 22px !important; } }
+@media (max-width: 900px) { .foot-grid > div:last-child { grid-column: 1 / -1; } }
