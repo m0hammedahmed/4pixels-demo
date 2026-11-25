@@ -133,12 +133,12 @@ function Landing({ t, lang, setLang, go }: { t: (k: string) => string; lang: Lan
             <svg viewBox="0 0 300 90" className="hm-chart" aria-hidden="true">
               <defs>
                 <linearGradient id="hgA" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f5a623" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#f5a623" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <path d="M4 70 L28 62 L52 66 L76 50 L100 54 L124 40 L148 46 L172 34 L196 38 L220 24 L244 30 L268 16 L296 10 L296 86 L4 86 Z" fill="url(#hgA)" />
-              <path d="M4 70 L28 62 L52 66 L76 50 L100 54 L124 40 L148 46 L172 34 L196 38 L220 24 L244 30 L268 16 L296 10" fill="none" stroke="#f5a623" strokeWidth="2.4" strokeLinejoin="round" />
+              <path d="M4 70 L28 62 L52 66 L76 50 L100 54 L124 40 L148 46 L172 34 L196 38 L220 24 L244 30 L268 16 L296 10" fill="none" stroke="#0ea5e9" strokeWidth="2.4" strokeLinejoin="round" />
             </svg>
             <div className="hm-row"><span className="hm-id">PX-4821</span><span>Mariam Adel</span><span className="hm-ok">1,950 {t('common.egp')}</span></div>
             <div className="hm-row"><span className="hm-id">PX-4820</span><span>Ahmed Samy</span><span className="hm-ok">700 {t('common.egp')}</span></div>
@@ -222,7 +222,7 @@ function Shell(props: {
     <div className="shell">
       <aside className={`sidebar${menuOpen ? ' open' : ''}`}>
         <div className="brand"><span className="brand-mark">4P</span><span>4Pixels<small>CRM &amp; E-COMMERCE</small></span></div>
-        <div className="ws-card"><span>moon@gmail.com</span><span className="ws-pill">USER</span></div>
+        <div className="ws-card"><span>demo@store.com</span><span className="ws-pill">USER</span></div>
         <div className="side-scroll">
           {GROUPS.map(gr => (
             <div key={gr.g}>
@@ -346,15 +346,15 @@ function Dashboard({ t, lang, go }: { t: (k: string) => string; lang: Lang; go: 
           <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('dash.revByDay')}>
             <defs>
               <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f5a623" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#f5a623" stopOpacity="0" />
+                <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
               </linearGradient>
             </defs>
             {[0.25, 0.5, 0.75].map(f => (
-              <line key={f} x1={P} x2={W - P} y1={H * f} y2={H * f} stroke="#182642" strokeWidth="1" />
+              <line key={f} x1={P} x2={W - P} y1={H * f} y2={H * f} stroke="#e2e8f0" strokeWidth="1" />
             ))}
             <path d={area} fill="url(#gA)" />
-            <path d={line} fill="none" stroke="#f5a623" strokeWidth="2.4" strokeLinejoin="round" />
+            <path d={line} fill="none" stroke="#0ea5e9" strokeWidth="2.4" strokeLinejoin="round" />
           </svg>
         </div>
 
@@ -735,9 +735,9 @@ function SmsPage({ t, showToast }: { t: (k: string) => string; showToast: (m: st
 /* ================= RETENTION ================= */
 function RetentionPage({ t }: { t: (k: string) => string }) {
   const heat = (v: number) => {
-    if (v <= 0) return { background: '#141f38', color: 'var(--muted-2)' };
+    if (v <= 0) return { background: '#eef2f7', color: 'var(--muted-2)' };
     const a = Math.min(0.85, 0.15 + v / 40);
-    return { background: `rgba(245, 166, 35, ${a})`, color: a > 0.5 ? '#1a1204' : 'var(--text)' };
+    return { background: `rgba(2, 132, 199, ${a})`, color: a > 0.5 ? '#ffffff' : 'var(--text)' };
   };
   return (
     <div>
@@ -859,7 +859,7 @@ function AuthShell({ lang, setLang, go, children }: { lang: Lang; setLang: (l: L
 function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: () => void }) {
   const ar = lang === 'ar';
   const [tab, setTab] = useState<'login' | 'signup'>('login');
-  const [email, setEmail] = useState('moon@gmail.com');
+  const [email, setEmail] = useState('demo@store.com');
   const [pw, setPw] = useState('demo-password');
   return (
     <AuthShell lang={lang} setLang={setLang} go={go}>
