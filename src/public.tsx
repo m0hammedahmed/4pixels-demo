@@ -35,9 +35,13 @@ export function PublicSite({ lang, setLang, go, page }: Props) {
         {page === 'contact' && <Contact lang={lang} />}
       </main>
       <footer className="pub-foot">
-        <div><b>4Pixels CRM</b><p>{tr(lang, 'WhatsApp CRM for Shopify and e-commerce teams.', 'CRM على واتساب لفرق Shopify والتجارة الإلكترونية.')}</p></div>
-        <div className="foot-links">{NAV.map(([k, en, ar]) => <button key={k} onClick={() => nav(k)}>{tr(lang, en, ar)}</button>)}</div>
-        <div className="muted small">WhatsApp 01066184859 · © 2026 4Pixels</div>
+        <div className="foot-grid">
+          <div className="foot-brand"><span className="brand-row"><span className="brand-mark">4P</span><b>4Pixels CRM</b></span><p>{tr(lang, 'WhatsApp CRM for Shopify and e-commerce teams. One inbox, every order, clear next steps.', 'CRM على واتساب لفرق Shopify والتجارة الإلكترونية. إنبوكس واحد، كل الأوردرات، وخطوات واضحة.')}</p></div>
+          <div><h5>{tr(lang, 'Product', 'المنتج')}</h5>{[['features', 'Features', 'المميزات'], ['pricing', 'Pricing', 'الأسعار'], ['login', 'Login', 'دخول'], ['login', 'Create account', 'إنشاء حساب']].map(([k, en, ar]) => <button key={en} onClick={() => nav(k)}>{tr(lang, en, ar)}</button>)}</div>
+          <div><h5>{tr(lang, 'Company', 'الشركة')}</h5>{[['home', 'Home', 'الرئيسية'], ['about', 'About us', 'من نحن'], ['projects', 'Projects', 'المشاريع'], ['contact', 'Contact', 'تواصل معنا']].map(([k, en, ar]) => <button key={en} onClick={() => nav(k)}>{tr(lang, en, ar)}</button>)}</div>
+          <div><h5>{tr(lang, 'Contact', 'تواصل')}</h5><span>WhatsApp: 01066184859</span><span>{tr(lang, 'Replies in about 2 minutes', 'بنرد في حوالي دقيقتين')}</span><span>Cairo, Egypt</span></div>
+        </div>
+        <div className="foot-bottom"><span>© 2026 4Pixels. {tr(lang, 'All rights reserved.', 'جميع الحقوق محفوظة.')}</span><span><button onClick={() => nav('contact')}>{tr(lang, 'Privacy', 'الخصوصية')}</button><button onClick={() => nav('contact')}>{tr(lang, 'Terms', 'الشروط')}</button></span></div>
       </footer>
     </div>
   );

@@ -6,35 +6,40 @@ import type { Lang } from './i18n';
 type P = { lang: Lang; showToast: (m: string) => void; go: (p: string) => void };
 const tr = (lang: Lang, en: string, ar?: string) => (lang === 'ar' && ar ? ar : en);
 
-function Head({ eyebrow, title, sub, right }: { eyebrow?: string; title: string; sub?: string; right?: React.ReactNode }) {
+function Head({ title, sub, right }: { eyebrow?: string; title: string; sub?: string; right?: React.ReactNode }) {
   return (
-    <div className="hero-card">
-      <div>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1 className="h1">{title}</h1>
-        {sub && <p className="muted" style={{ margin: '6px 0 0' }}>{sub}</p>}
-      </div>
+    <div className="page-head">
+      <div><h1 className="h1">{title}</h1>{sub && <p className="muted">{sub}</p>}</div>
       {right && <div className="head-right">{right}</div>}
     </div>
   );
 }
 
 const STATUS_COLOR: Record<string, string> = { Pending: 'gold', Confirmed: 'green', Fulfilled: 'green', Return: 'red', 'Partial Return': 'red', 'Customer cancel': 'purple', Cancelled: 'red' };
-const statusLabel = (s: string) => (s === 'Confirmed' ? 'Confirmed ✅' : s === 'Fulfilled' ? 'Fulfilled / Shipped ✅' : s === 'Cancelled' ? 'Cancelled ❌' : s);
+const statusLabel = (s: string) => (s === 'Confirmed' ? 'Confirmed' : s === 'Fulfilled' ? 'Fulfilled / Shipped' : s);
 
 /* ---------------- Range filter ---------------- */
 function RangePicker({ lang, range, setRange, custom, setCustom }: { lang: Lang; range: string; setRange: (r: string) => void; custom: { from: string; to: string }; setCustom: (c: { from: string; to: string }) => void }) {
   return (
     <div className="range-box">
-      <label className="lbl">{tr(lang, 'DATE RANGE', 'الفترة')}</label>
-      <select value={range} onChange={e => setRange(e.target.value)}>{RANGE_KEYS.map(r => <option key={r}>{r}</option>)}</select>
+      <label className="lbl">{tr(lang, 'Date range', 'الفترة')}</label>
+      <select className="inp" value={range} onChange={e => setRange(e.target.value)}>{RANGE_KEYS.map(r => <option key={r}>{r}</option>)}</select>
       {range === 'Custom range' && (
         <div className="custom-range">
-          <label>{tr(lang, 'From', 'من')}<input type="date" value={custom.from} onChange={e => setCustom({ ...custom, from: e.target.value })} /></label>
-          <label>{tr(lang, 'To', 'إلى')}<input type="date" value={custom.to} onChange={e => setCustom({ ...custom, to: e.target.value })} /></label>
+          <label>{tr(lang, 'From day', 'من يوم')}<input className="inp" type="date" value={custom.from} onChange={e => setCustom({ ...custom, from: e.target.value })} /></label>
+          <label>{tr(lang, 'To day', 'إلى يوم')}<input className="inp" type="date" value={custom.to} onChange={e => setCustom({ ...custom, to: e.target.value })} /></label>
         </div>
       )}
-      <span className="muted small">{range} • Cairo time (UTC+2)</span>
+    </div>
+  );
+}
+
+function Section({ title, sub, children, defaultOpen }: { title: string; sub?: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className="card section">
+      <button className="section-head" onClick={() => setOpen(!open)}><div><b>{title}</b>{sub && <div className="muted small">{sub}</div>}</div><span className={`chev${open ? ' up' : ''}`}><I n="back" size={16} /></span></button>
+      {open && <div className="section-body">{children}</div>}
     </div>
   );
 }
@@ -66,39 +71,43 @@ export function DashboardPage({ lang, showToast, go }: P) {
   }, [scoped, q, sort, mode]);
   return (
     <div>
-      <Head eyebrow="DASHBOARD" title={tr(lang, 'Dashboard', 'لوحة التحكم')} sub={tr(lang, 'Everything about your orders in one organized view.', 'كل حاجة عن أوردراتك في شاشة واحدة منظمة.')} />
-      <div className="card card-pad filter-bar">
+      <Head title={tr(lang, 'Dashboard', 'لوحة التحكم')} sub={tr(lang, 'Your orders at a glance. Open a section to see more.', 'أوردراتك في نظرة واحدة. افتح أي قسم لتفاصيل أكتر.')} />
+      <div className="toolbar">
         <RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />
-        <div className="range-box"><label className="lbl">{tr(lang, 'ORDER STATUS SCOPE', 'حالة الأوردر')}</label>
-          <select value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(s => <option key={s}>{s}</option>)}</select></div>
+        <div className="range-box"><label className="lbl">{tr(lang, 'Order status', 'حالة الأوردر')}</label>
+          <select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(s => <option key={s}>{s}</option>)}</select></div>
       </div>
-      <div className="kpi-grid kpi-7">
-        {kpis.map(([k, v, c]) => <div className={`card kpi k-${c}`} key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div></div>)}
-        <div className="card kpi dark"><div className="small">All order value</div><div className="kpi-v">{fmtMoney(sum(() => true))}</div><div className="small op">Every status in the selected range</div></div>
-        <div className="card kpi blue"><div className="small">Requested Revenue</div><div className="kpi-v">{fmtMoney(sum(o => o.status === 'Pending' || o.status === 'Confirmed'))}</div><div className="small op">Pending and confirmed orders in the selected range</div></div>
+      <div className="kpi-grid kpi-4">
+        <div className="card kpi"><div className="small k-t">Total Orders</div><div className="kpi-v">{list.length}</div><div className="small muted">{range}</div></div>
+        <div className="card kpi k-blue"><div className="small k-t">Confirmed &amp; Fulfilled</div><div className="kpi-v">{cnt(o => o.status === 'Confirmed' || o.status === 'Fulfilled')}</div><div className="small muted">Orders moving forward</div></div>
+        <div className="card kpi dark"><div className="small">All order value</div><div className="kpi-v">{fmtMoney(sum(() => true))}</div><div className="small op">Every status</div></div>
+        <div className="card kpi blue"><div className="small">Requested Revenue</div><div className="kpi-v">{fmtMoney(sum(o => o.status === 'Pending' || o.status === 'Confirmed'))}</div><div className="small op">Pending and confirmed</div></div>
       </div>
-      <div className="card card-pad" style={{ marginTop: 18 }}>
-        <div className="row-between wrap">
-          <div><h3 className="h3">Product stats from orders</h3><p className="muted small" style={{ margin: 0 }}>Each product is calculated automatically from order line items.</p></div>
-          <div className="seg"><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>By revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>By quantity</button></div>
+      <Section title={tr(lang, 'Status breakdown', 'تفصيل الحالات')} sub={tr(lang, 'Pending, returns, and cancellations', 'المعلّق والمرتجع والملغي')} defaultOpen>
+        <div className="brk">
+          {[['Pending', cnt(o => o.status === 'Pending'), 'gold'], ['Confirmed', cnt(o => o.status === 'Confirmed'), 'green'], ['Returned / RTO', cnt(o => o.status === 'Return' || o.status === 'Partial Return'), 'orange'], ['Customer cancel request', cnt(o => o.status === 'Customer cancel'), 'purple'], ['Cancelled on Shopify', cnt(o => o.status === 'Cancelled'), 'red']].map(([k, v, c]) => (
+            <div className="brk-row" key={String(k)}><span className={`dot d-${c}`} /><span className="grow">{k}</span><b>{v as number}</b><div className="bar"><i className={`d-${c}`} style={{ width: `${list.length ? ((v as number) / list.length) * 100 : 0}%` }} /></div></div>
+          ))}
         </div>
+      </Section>
+      <Section title={tr(lang, 'Product stats', 'إحصائيات المنتجات')} sub={tr(lang, 'Calculated from order line items. Search, sort and export.', 'من بنود الأوردرات. بحث وترتيب وتصدير.')}>
+        <div className="seg" style={{ marginBottom: 12 }}><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>By revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>By quantity</button></div>
         <div className="tool-row">
-          <input className="inp" placeholder="Single Search" value={q} onChange={e => setQ(e.target.value)} />
+          <input className="inp grow" placeholder="Single Search" value={q} onChange={e => setQ(e.target.value)} />
           <button className="btn btn-ghost btn-sm" onClick={() => showToast('Multi search: paste several product names')}>Multi Search</button>
-          <select className="inp" value={sort} onChange={e => setSort(e.target.value)}><option value="none">No alphabetical sort</option><option value="az">Alphabetical: A to Z</option><option value="za">Alphabetical: Z to A</option></select>
+          <select className="inp" value={sort} onChange={e => setSort(e.target.value)}><option value="none">No alphabetical sort</option><option value="az">A to Z</option><option value="za">Z to A</option></select>
           <button className="btn btn-ghost btn-sm" onClick={() => { setQ(''); setSort('none'); setScope('All statuses'); }}>Clear filters</button>
           <button className="btn btn-primary btn-sm" onClick={() => showToast('Exported filtered products (demo)')}>Export filtered</button>
         </div>
         <div className="stat-row">
           <div><span className="muted small">Requested products</span><b>{products.length}</b></div>
-          <div><span className="muted small">Total requested quantity</span><b>{products.reduce((s, p) => s + p.qty, 0)}</b></div>
+          <div><span className="muted small">Total quantity</span><b>{products.reduce((s, p) => s + p.qty, 0)}</b></div>
           <div><span className="muted small">Products value</span><b>{fmtMoney(products.reduce((s, p) => s + p.value, 0))}</b></div>
         </div>
-        <div className="table-wrap"><table className="data"><thead><tr><th>Product</th><th>Quantity</th><th>Orders</th><th>Value</th><th>Unit price</th></tr></thead>
+        <div className="table-wrap"><table className="data"><thead><tr><th>Product</th><th>Qty</th><th>Orders</th><th>Value</th><th>Unit price</th></tr></thead>
           <tbody>{products.map(p => <tr key={p.name}><td>{p.name}</td><td>{p.qty}</td><td>{p.orders}</td><td>{fmtMoney(p.value)}</td><td>{fmtMoney(p.unit)}</td></tr>)}
             {products.length === 0 && <tr><td colSpan={5} className="muted">No orders in this range.</td></tr>}</tbody></table></div>
-        <p className="muted small" style={{ marginTop: 10 }}>Tip: <button className="link-btn inline" onClick={() => go('orders')}>open Orders</button> to see each order.</p>
-      </div>
+      </Section>
     </div>
   );
 }
@@ -118,6 +127,8 @@ export function OrdersPage({ lang, showToast, go }: P) {
   const [comments, setComments] = useState<Record<number, string[]>>({});
   const [draft, setDraft] = useState('');
   const [retFor, setRetFor] = useState<number | null>(null);
+  const [info, setInfo] = useState(false);
+  const [filt, setFilt] = useState(false);
   const r = rangeFor(range, custom);
   let list = ORDERS.filter(o => o.date >= r.from && o.date < r.to && (source === 'All sources' || o.source === source) && (tab === 'All' || o.status === tab));
   const ql = q.trim().toLowerCase();
@@ -130,31 +141,35 @@ export function OrdersPage({ lang, showToast, go }: P) {
   const countIn = (s: string) => ORDERS.filter(o => s === 'All' || o.status === s).length;
   return (
     <div>
-      <Head eyebrow="ORDERS" title={tr(lang, 'Orders', 'الأوردرات')} sub={tr(lang, 'Clear view of orders, statuses, and internal comments', 'عرض واضح للأوردرات وحالاتها والتعليقات الداخلية')} />
-      <div className="two-kpi">
-        <div className="card card-pad tint-green"><div className="row-between"><span className="eyebrow g">FILTERED NET SALES</span><span className="chip green">{ful.length} fulfilled</span></div><div className="big">{fmtMoney(net)}</div><p className="muted small">Product value from fulfilled orders after Shopify discounts and returns, excluding shipping, taxes, and cancellations.</p></div>
-        <div className="card card-pad tint-blue"><div className="row-between"><span className="eyebrow">FILTERED NET PROFIT</span><span className="chip gold">99.21% cost</span></div><div className="big">{fmtMoney(prof)}</div><p className="muted small">Fulfilled Net Sales − product cost − recorded shipping amount. Ads and general operating expenses are not deducted.</p></div>
-      </div>
-      <div className="card card-pad filter-bar">
-        <RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />
-        <div className="range-box"><label className="lbl">ORDER SOURCE</label><select value={source} onChange={e => setSource(e.target.value)}>{['All sources', 'Recovered abandoned checkout', 'Abandoned message', 'Direct / Other', 'Shopify'].map(s => <option key={s}>{s}</option>)}</select></div>
-        <div className="range-box"><label className="lbl">SORT BY</label><select value={sort} onChange={e => setSort(e.target.value)}>{['Newest first', 'Oldest first', 'Order number high to low', 'Highest value', 'Lowest value'].map(s => <option key={s}>{s}</option>)}</select></div>
+      <Head title={tr(lang, 'Orders', 'الأوردرات')} sub={tr(lang, 'Tap an order to see its details.', 'اضغط على أوردر لتشوف تفاصيله.')} />
+      <div className="card strip">
+        <div><span className="muted small">Filtered net sales</span><b>{fmtMoney(net)}</b><span className="chip green">{ful.length} fulfilled</span></div>
+        <div><span className="muted small">Filtered net profit</span><b>{fmtMoney(prof)}</b></div>
+        <button className="link-btn" onClick={() => setInfo(!info)}>{info ? 'Hide' : 'How is this calculated?'}</button>
+        {info && <p className="muted small strip-note">Net sales: product value from fulfilled orders after Shopify discounts and returns, excluding shipping, taxes and cancellations. Net profit: net sales minus product cost and recorded shipping. Ads and operating expenses are not deducted.</p>}
       </div>
       <div className="tool-row">
         <select className="inp narrow" value={field} onChange={e => setField(e.target.value)}><option>Order #</option><option>Phone</option><option>All fields</option></select>
         <input className="inp grow" placeholder="Search by order number, e.g. 12500" value={q} onChange={e => setQ(e.target.value)} />
-        <button className="btn btn-ghost" onClick={() => { setQ(''); setTab('All'); setSource('All sources'); setRange('All time'); }}>Clear filters</button>
+        <button className={`btn btn-ghost${filt ? ' on' : ''}`} onClick={() => setFilt(!filt)}>Filters</button>
       </div>
-      <div className="status-grid">
-        {['All', ...tabs].map(s => <button key={s} className={`stat-tab${tab === s ? ' on' : ''}`} onClick={() => setTab(s)}><span>{statusLabel(s)}</span><small>{countIn(s)}</small></button>)}
+      {filt && (
+        <div className="toolbar">
+          <RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />
+          <div className="range-box"><label className="lbl">Order source</label><select className="inp" value={source} onChange={e => setSource(e.target.value)}>{['All sources', 'Recovered abandoned checkout', 'Abandoned message', 'Direct / Other', 'Shopify'].map(s => <option key={s}>{s}</option>)}</select></div>
+          <div className="range-box"><label className="lbl">Sort by</label><select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['Newest first', 'Oldest first', 'Order number high to low', 'Highest value', 'Lowest value'].map(s => <option key={s}>{s}</option>)}</select></div>
+          <button className="btn btn-ghost btn-sm" onClick={() => { setQ(''); setTab('All'); setSource('All sources'); setRange('All time'); }}>Clear filters</button>
+        </div>
+      )}
+      <div className="tabs-scroll">
+        {['All', ...tabs].map(s => <button key={s} className={`tab${tab === s ? ' on' : ''}`} onClick={() => setTab(s)}>{statusLabel(s)} <small>{countIn(s)}</small></button>)}
       </div>
-      <div className="card card-pad bulk-bar">
-        <div><b>{sel.length} orders selected</b><div className="muted small">{Math.min(shown, list.length)} shown of {list.length} matching • {ORDERS.length} total orders</div></div>
+      <div className="bulk-line">
+        <span className="muted small">{Math.min(shown, list.length)} of {list.length} orders{sel.length ? ` · ${sel.length} selected` : ''}</span>
         <div className="btn-row">
-          <button className="btn btn-ghost btn-sm" onClick={() => setSel(list.slice(0, shown).map(o => o.id))}>Select visible</button>
-          <button className="btn btn-ghost btn-sm" disabled={!sel.length} onClick={() => setSel([])}>Clear selection</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setSel(sel.length ? [] : list.slice(0, shown).map(o => o.id))}>{sel.length ? 'Clear selection' : 'Select visible'}</button>
           <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported filtered orders (demo)')}>Export filtered</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported all orders (demo)')}>Export all orders</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported all orders (demo)')}>Export all</button>
           <button className="btn btn-primary btn-sm" disabled={!sel.length} onClick={() => { showToast(`Confirmation sent to ${sel.length} orders`); setSel([]); }}>Send confirmation</button>
         </div>
       </div>
@@ -167,32 +182,42 @@ export function OrdersPage({ lang, showToast, go }: P) {
               <div className="order-top" onClick={() => setOpen(isOpen ? null : o.id)}>
                 <input type="checkbox" checked={sel.includes(o.id)} onClick={e => e.stopPropagation()} onChange={e => setSel(e.target.checked ? [...sel, o.id] : sel.filter(x => x !== o.id))} />
                 <div className="order-main">
-                  <div className="order-line"><b>#{o.id}</b><span className={`chip ${STATUS_COLOR[o.status]}`}>{statusLabel(o.status)}</span>{o.status === 'Fulfilled' && <span className="chip grey">fulfilled</span>}<span className="chip green">{o.source}</span></div>
-                  <div className="order-name">{o.name} - {o.phone} <span className="chip green">Bosta · {o.bosta}%</span></div>
-                  <div className="muted small">{o.email} · {fmtDate(o.date)}</div>
+                  <div className="order-line"><b>#{o.id}</b><span className={`chip ${STATUS_COLOR[o.status]}`}>{statusLabel(o.status)}</span></div>
+                  <div className="order-name">{o.name}</div>
+                  <div className="muted small">{o.phone} · {fmtDate(o.date)}</div>
                 </div>
-                <div className="order-side">
-                  <div className="muted small">Order Total</div><div className="order-total">{fmtMoney(o.total)}</div><div className="muted small">Net Profit: {fmtMoney(o.profit)}</div>
-                  <div className="btn-row" onClick={e => e.stopPropagation()}>
-                    <button className="btn btn-ghost btn-sm" onClick={() => go('chats')}>Open Chat</button>
-                    <button className="btn btn-sm btn-warn" onClick={() => setRetFor(o.id)}>Edit Return Reason</button>
-                  </div>
-                </div>
+                <div className="order-side"><div className="order-total">{fmtMoney(o.total)}</div><span className={`chev${isOpen ? ' up' : ''}`}><I n="back" size={16} /></span></div>
               </div>
-              <button className="details-toggle" onClick={() => setOpen(isOpen ? null : o.id)}>{isOpen ? 'Hide Details' : 'Show Details'}</button>
               {isOpen && (
                 <div className="order-details">
-                  <div className="mini-grid">{[['Subtotal', o.subtotal], ['Shipping', o.shipping], ['Tax', o.tax], ['Discount', o.discount]].map(([k, v]) => <div className="mini" key={String(k)}><span>{k}</span><b>{fmtMoney(Number(v))}</b></div>)}<div className="mini green"><span>Total</span><b>{fmtMoney(o.total)}</b></div><div className="mini blue"><span>Net Profit</span><b>{fmtMoney(o.profit)}</b></div></div>
-                  <div className="two-box"><div className="box"><span>Acquisition Source</span><b>{o.source}</b></div><div className="box"><span>Bosta</span><b>{o.bostaStatus}{o.tracking ? ` · ${o.tracking}` : ' · not linked'}</b></div></div>
-                  <div className="two-box"><div className="box"><span>Payment Status</span><b>{o.payment}</b></div><div className="box"><span>Fulfillment Status</span><b>{o.fulfillment}</b></div></div>
-                  <div className="two-box">
-                    <div className="box"><span>Automation Status</span><b>No active automation issues right now.</b></div>
-                    <div className="box"><span>Automation Timeline</span>{o.timeline.slice().reverse().map(t => <div className="tl" key={t.t}><i />{t.t}<small>{fmtDate(t.at)}</small></div>)}</div>
+                  <div className="btn-row">
+                    <button className="btn btn-primary btn-sm" onClick={() => go('chats')}>Open Chat</button>
+                    <button className="btn btn-warn btn-sm" onClick={() => setRetFor(o.id)}>Edit Return Reason</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setOpen(null)}>Hide Details</button>
                   </div>
-                  <div className="two-box"><div className="box"><span>Tags</span><div>{o.tags.map(t => <span className="chip grey" key={t}>{t}</span>)}</div></div><div className="box"><span>Note</span><b>-</b></div></div>
-                  <div className="two-box"><div className="box"><span>Shipping Address</span><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt<br />Phone: {o.phone}</div></div><div className="box"><span>Billing Address</span><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt</div></div></div>
-                  <div className="box"><span>Items</span>{o.items.map(it => <div className="item-row" key={it.name}><div>{it.name}<small>x{it.qty}</small></div><div className="muted small">{fmtMoney(it.unit)} / per unit</div><b>{fmtMoney(it.unit * it.qty)}</b></div>)}</div>
-                  <div className="box"><span>Order Comments</span>
+                  <div className="d-cols">
+                    <div className="d-sec"><h4>Payment summary</h4>
+                      {[['Subtotal', o.subtotal], ['Shipping', o.shipping], ['Tax', o.tax], ['Discount', o.discount ? -o.discount : 0]].map(([k, v]) => <div className="kv" key={String(k)}><span>{k}</span><b>{fmtMoney(Number(v))}</b></div>)}
+                      <div className="kv total"><span>Total</span><b>{fmtMoney(o.total)}</b></div>
+                      <div className="kv"><span>Net profit</span><b className="g">{fmtMoney(o.profit)}</b></div>
+                    </div>
+                    <div className="d-sec"><h4>Status</h4>
+                      <div className="kv"><span>Acquisition source</span><b>{o.source}</b></div>
+                      <div className="kv"><span>Payment</span><b>{o.payment}</b></div>
+                      <div className="kv"><span>Fulfillment</span><b>{o.fulfillment}</b></div>
+                      <div className="kv"><span>Bosta</span><b>{o.bostaStatus}</b></div>
+                      <div className="kv"><span>Tracking</span><b>{o.tracking || 'not linked'}</b></div>
+                      <div className="kv"><span>Bosta verification</span><b>{o.bosta}%</b></div>
+                    </div>
+                  </div>
+                  <div className="d-sec"><h4>Items</h4>{o.items.map(it => <div className="item-row" key={it.name}><div>{it.name}<small>x{it.qty}</small></div><div className="muted small">{fmtMoney(it.unit)} each</div><b>{fmtMoney(it.unit * it.qty)}</b></div>)}</div>
+                  <div className="d-cols">
+                    <div className="d-sec"><h4>Shipping address</h4><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt<br />{o.phone}<br />{o.email}</div></div>
+                    <div className="d-sec"><h4>Billing address</h4><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt</div></div>
+                  </div>
+                  <div className="d-sec"><h4>Automation timeline</h4>{o.timeline.slice().reverse().map(t => <div className="tl" key={t.t}><i />{t.t}<small>{fmtDate(t.at)}</small></div>)}</div>
+                  <div className="d-sec"><h4>Tags</h4><div className="chip-row">{o.tags.map(t => <span className="chip grey" key={t}>{t}</span>)}</div></div>
+                  <div className="d-sec"><h4>Order comments</h4>
                     {cm.length === 0 && <div className="muted small">No comments yet.</div>}{cm.map((c, i) => <div className="comment" key={i}>{c}</div>)}
                     <div className="tool-row"><input className="inp grow" placeholder="Write an internal comment" value={draft} onChange={e => setDraft(e.target.value)} /><button className="btn btn-primary btn-sm" onClick={() => { if (draft.trim()) { setComments({ ...comments, [o.id]: [...(comments[o.id] || []), draft.trim()] }); setDraft(''); } }}>Add Comment</button></div>
                   </div>
@@ -227,6 +252,7 @@ export function ChatPage({ lang, showToast }: P) {
   const [draft, setDraft] = useState('');
   const [sent, setSent] = useState<Record<number, string[]>>({});
   const [read, setRead] = useState<number[]>([]);
+  const [more, setMore] = useState(false);
   const chats = ORDERS.slice(0, 24);
   const unread = (o: DOrder) => (read.includes(o.id) ? 0 : o.unread);
   let list = chats.filter(o => (chan === 'All' || chan === 'WhatsApp') && (`${o.name} ${o.phone} ${o.lastMsg} ${o.id}`.toLowerCase().includes(q.toLowerCase())));
@@ -237,25 +263,22 @@ export function ChatPage({ lang, showToast }: P) {
   const send = () => { if (cur && draft.trim()) { setSent({ ...sent, [cur.id]: [...(sent[cur.id] || []), draft.trim()] }); setDraft(''); } };
   return (
     <div className="chat-page">
-      <div className="chan-row">
-        {[['All', 'chats', chats.length], ['WhatsApp', 'whatsapp', chats.length], ['Instagram', 'instagram', 0], ['Messenger', 'messenger', 0]].map(([n, ic, c]) => (
-          <button key={String(n)} className={`chan${chan === n ? ' on' : ''}`} onClick={() => setChan(String(n))}><span className={`chan-ic ${String(n).toLowerCase()}`}><I n={String(ic)} size={16} /></span><span><b>{n === 'All' ? 'All Channels' : n}</b><small>{c}</small></span></button>
-        ))}
-      </div>
       <div className={`chat-wrap${cur ? ' has-sel' : ''}`}>
         <div className="conv-col card">
-          <div className="conv-head"><h2 className="h2">Conversations</h2><p className="muted small">Real-time messages from all channels</p>
-            <div className="pill-row">{['All', 'Unreplied', 'Not contacted', 'Unread', 'Follow-up ⭐'].map(f => <button key={f} className={`pill${filter === f.replace(' ⭐', '') || (filter === 'All' && f === 'All') ? ' on' : ''}`} onClick={() => setFilter(f.replace(' ⭐', ''))}>{f}</button>)}</div>
-            <input className="inp" placeholder="Search by name, phone, or message" value={q} onChange={e => setQ(e.target.value)} /></div>
+          <div className="conv-head">
+            <div className="row-between"><h2 className="h2">Chats</h2><span className="muted small">{chats.length} chats · {chats.filter(o => unread(o) > 0).length} unread</span></div>
+            <div className="seg full">{['All', 'WhatsApp', 'Instagram', 'Messenger'].map(n => <button key={n} className={chan === n ? 'on' : ''} onClick={() => setChan(n)}>{n}</button>)}</div>
+            <input className="inp" placeholder="Search name, phone or message" value={q} onChange={e => setQ(e.target.value)} />
+            <div className="pill-row scroll">{['All', 'Unreplied', 'Not contacted', 'Unread', 'Follow-up'].map(f => <button key={f} className={`pill${filter === f ? ' on' : ''}`} onClick={() => setFilter(f)}>{f}</button>)}</div>
+          </div>
           <div className="conv-scroll">
             {list.map(o => (
-              <div key={o.id} className={`conv${sel === o.id ? ' on' : ''}`} onClick={() => { setSel(o.id); setRead([...read, o.id]); }}>
-                <div className="av">{o.name[0]}<span className="wa"><I n="whatsapp" size={10} /></span></div>
+              <div key={o.id} className={`conv${sel === o.id ? ' on' : ''}`} onClick={() => { setSel(o.id); setRead([...read, o.id]); setMore(false); }}>
+                <div className="av">{o.name[0]}</div>
                 <div className="conv-body">
-                  <div className="row-between"><b>{o.name}</b><span className="chip order-ch">#{o.id}</span><span className="muted small">{new Date(o.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span></div>
-                  <div className="row-line">{o.status === 'Fulfilled' && <span className="chip green">PAID</span>}<span className="chip grey">{o.status}</span></div>
-                  <div className="muted small clamp">{o.lastMsg}</div>
-                  <div className="muted small">{o.phone}</div>
+                  <div className="row-between"><b>{o.name}</b><span className="muted small">{new Date(o.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span></div>
+                  <div className="muted small">#{o.id} · {o.phone}</div>
+                  <div className="muted small clamp1">{o.lastMsg}</div>
                 </div>
                 {unread(o) > 0 && <span className="unread">{unread(o)}</span>}
               </div>
@@ -264,25 +287,36 @@ export function ChatPage({ lang, showToast }: P) {
           </div>
         </div>
         <div className="thread-col card">
-          {!cur ? <div className="empty big"><div className="empty-ic"><I n="chats" size={26} /></div>Select a customer to start chatting<small>{chats.length} chats • {chats.filter(o => unread(o) > 0).length} unread</small></div> : (
+          {!cur ? <div className="empty big"><div className="empty-ic"><I n="chats" size={26} /></div><b>Select a chat</b><small>Pick a customer on the left to see the conversation and the order.</small></div> : (
             <>
               <div className="thread-head">
                 <button className="icon-btn back-btn" onClick={() => setSel(null)}><I n="back" size={16} /></button>
                 <div className="av">{cur.name[0]}</div>
-                <div className="grow"><b>{cur.name}</b><div className="muted small">{cur.phone} · Order #{cur.id}</div></div>
-                <span className={`chip ${STATUS_COLOR[cur.status]}`}>{statusLabel(cur.status)}</span>
+                <div className="grow"><b>{cur.name}</b><div className="muted small">{cur.phone}</div></div>
+                <button className="btn btn-ghost btn-sm" onClick={() => setMore(!more)}>{more ? 'Hide order' : 'Order details'}</button>
               </div>
-              <div className="info-strip">
-                <div><span>Order</span><b>#{cur.id}</b></div><div><span>Customer</span><b>{cur.name}</b></div><div><span>Phone</span><b>{cur.phone}</b></div>
-                <div><span>Total</span><b>{fmtMoney(cur.total)}</b></div><div><span>Bosta</span><b>{cur.bostaStatus} · {cur.bosta}%</b></div><div><span>Tracking</span><b>{cur.tracking || 'Not linked'}</b></div>
-                <div><span>City</span><b>{cur.city}</b></div><div><span>Items</span><b>{cur.items.map(i => `${i.name} x${i.qty}`).join(', ')}</b></div>
+              <div className="order-chip-row">
+                <span className="chip order-ch">Order #{cur.id}</span><span className={`chip ${STATUS_COLOR[cur.status]}`}>{statusLabel(cur.status)}</span><span className="chip green">Bosta · {cur.bostaStatus}</span><span className="muted small">{fmtMoney(cur.total)}</span>
               </div>
+              {more && (
+                <div className="info-panel">
+                  <div className="kv"><span>Order number</span><b>#{cur.id}</b></div>
+                  <div className="kv"><span>Customer</span><b>{cur.name}</b></div>
+                  <div className="kv"><span>Phone</span><b>{cur.phone}</b></div>
+                  <div className="kv"><span>City</span><b>{cur.city}</b></div>
+                  <div className="kv"><span>Total</span><b>{fmtMoney(cur.total)}</b></div>
+                  <div className="kv"><span>Bosta status</span><b>{cur.bostaStatus} · {cur.bosta}%</b></div>
+                  <div className="kv"><span>Tracking</span><b>{cur.tracking || 'Not linked'}</b></div>
+                  <div className="kv"><span>Items</span><b>{cur.items.map(i => `${i.name} x${i.qty}`).join(', ')}</b></div>
+                </div>
+              )}
               <div className="msgs-col">
+                <div className="day">{new Date(cur.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</div>
                 <div className="bubble out">Hello {cur.name.split(' ')[0]}, your order #{cur.id} was created. Reply YES to confirm.<small>{fmtDate(cur.date + 8000)}</small></div>
                 <div className="bubble in">{cur.lastMsg}<small>{fmtDate(cur.date + 600000)}</small></div>
                 {(sent[cur.id] || []).map((m, i) => <div className="bubble out" key={i}>{m}<small>now ✓✓</small></div>)}
               </div>
-              <div className="composer"><input className="inp grow" placeholder="Type a message" value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} /><button className="btn btn-ghost btn-sm" onClick={() => showToast('Template picker (demo)')}>Template</button><button className="btn btn-primary" onClick={send}><I n="send" size={16} /></button></div>
+              <div className="composer"><input className="inp grow" placeholder="Type a message" value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} /><button className="btn btn-ghost btn-sm" onClick={() => showToast('Template picker (demo)')}>Template</button><button className="btn btn-primary send-btn" onClick={send}><I n="send" size={16} /></button></div>
             </>
           )}
         </div>
@@ -452,8 +486,8 @@ export function OffersPage({ lang, showToast }: P) {
       <div className="two-box">{([['up', 'Upsell & Cross-sell', 'Post-confirmation offers for complementary or additional products.'], ['cancel', 'Cancellation Recovery', 'Recovery offers only after a real Shopify cancellation.']] as const).map(([k, t, d]) => <button key={k} className={`flow-card${flow === k ? ' on' : ''}`} onClick={() => setFlow(k)}><b>{t}</b><span className="muted small">{d}</span><span className={`chip ${en[k] ? 'green' : 'grey'}`}>{en[k] ? 'Enabled' : 'Disabled'}</span></button>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}>
         <p className="eyebrow">SMART OFFERS</p><h3 className="h3">{flow === 'up' ? 'Send a catalog-wide, tracked WhatsApp cross-sell after every confirmed order.' : 'Win back customers after a Shopify cancellation.'}</h3>
-        <div className="kpi-grid kpi-4">{[['SEND TIME', `${hrs}h`, 'hours after confirmation'], ['DISCOUNT PERCENT', `${pct}%`, 'Discount code ' + code], ['CUSTOMER GAP', `${gap}d`, 'days before another offer'], ['STATUS', en[flow] ? 'Enabled' : 'Disabled', 'Automation is ready to send offers after confirmation.']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
-        <div className="kpi-grid kpi-4" style={{ marginTop: 12 }}>{[['Messages sent', '3,399', '615 QUEUED • 4,294 MATCHED'], ['Link clicks', '1,513', '1,066 CUSTOMERS'], ['Repeat purchases', '48', '47 CUSTOMERS'], ['Click-through rate', '44.5%', '1.4% REPEAT RATE']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">CAMPAIGN TRACKING</div><div className="small">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
+<Section title="Results and tracking" sub="Send time, discount, clicks and repeat purchases">        <div className="kpi-grid kpi-4">{[['SEND TIME', `${hrs}h`, 'hours after confirmation'], ['DISCOUNT PERCENT', `${pct}%`, 'Discount code ' + code], ['CUSTOMER GAP', `${gap}d`, 'days before another offer'], ['STATUS', en[flow] ? 'Enabled' : 'Disabled', 'Automation is ready to send offers after confirmation.']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
+        <div className="kpi-grid kpi-4" style={{ marginTop: 12 }}>{[['Messages sent', '3,399', '615 QUEUED • 4,294 MATCHED'], ['Link clicks', '1,513', '1,066 CUSTOMERS'], ['Repeat purchases', '48', '47 CUSTOMERS'], ['Click-through rate', '44.5%', '1.4% REPEAT RATE']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="eyebrow">CAMPAIGN TRACKING</div><div className="small">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div></Section>
         <p className="muted small">We measure sends, clicks, and repeat purchases from the tracked link. Last send: 11/25/2026, 8:59 AM · 3,884 reached · 1,067 clicked offers · 47 purchased offers</p>
       </div>
       <div className="two-col-flex" style={{ marginTop: 14 }}>
@@ -480,7 +514,7 @@ export function RetentionPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="GROWTH AUTOMATION" title="Customer Retention" sub="Bring recent buyers back automatically. Every week, eligible customers receive a private one-time Shopify discount with a polished Meta marketing message." right={<div className="btn-row"><span className={`chip ${on ? 'green' : 'grey'}`}>{on ? 'Automation active' : 'Automation paused'}</span><span className="muted small">Next run: {on ? 'Mon 10:00' : '—'}</span><button className="btn btn-primary btn-sm" onClick={() => showToast('Run started (demo)')}>Run now</button></div>} />
-      <div className="kpi-grid kpi-4">{[['ACTIVE OFFERS', '0'], ['ISSUED', '83'], ['MESSAGES SENT', '0'], ['CLICKED', '0'], ['CONVERTED', '0'], ['FAILED', '83'], ['RECOVERED REVENUE', '0 EGP']].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
+<Section title="Results" sub="Offers issued, messages sent, conversions">      <div className="kpi-grid kpi-4">{[['ACTIVE OFFERS', '0'], ['ISSUED', '83'], ['MESSAGES SENT', '0'], ['CLICKED', '0'], ['CONVERTED', '0'], ['FAILED', '83'], ['RECOVERED REVENUE', '0 EGP']].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div></Section>
       <p className="muted small">Orders placed after a retention message are matched back to the customer automatically.</p>
       <div className="card card-pad" style={{ marginTop: 14 }}><p className="eyebrow">AUTOMATION RULES</p><div className="row-between"><h3 className="h3">Who should receive the weekly offer?</h3><label className="switch-row"><input type="checkbox" checked={on} onChange={e => setOn(e.target.checked)} />Enabled</label></div><p className="muted small">No customer picking. The CRM builds the audience automatically from recent orders. Up to 400 customers can be contacted in each weekly run.</p>
         <div className="grid-3">{([['LAST ORDER WITHIN (days)', 'last'], ['WAIT AT LEAST (days)', 'wait'], ['OFFER VALIDITY (days)', 'valid'], ['MINIMUM LAST ORDER (EGP)', 'min'], ['MAX CUSTOMERS / RUN', 'max']] as const).map(([l, k]) => <div key={k}><label className="lbl">{l}</label><input className="inp" type="number" value={f[k]} onChange={set(k)} /></div>)}</div></div>
