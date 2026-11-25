@@ -6,13 +6,8 @@ import type { Lang } from './i18n';
 type P = { lang: Lang; showToast: (m: string) => void; go: (p: string) => void };
 const tr = (lang: Lang, en: string, ar?: string) => (lang === 'ar' && ar ? ar : en);
 
-function Head({ title, sub, right }: { eyebrow?: string; title: string; sub?: string; right?: React.ReactNode }) {
-  return (
-    <div className="page-head">
-      <div><h1 className="h1">{title}</h1>{sub && <p className="muted">{sub}</p>}</div>
-      {right && <div className="head-right">{right}</div>}
-    </div>
-  );
+function Head({ right }: { eyebrow?: string; title?: string; sub?: string; right?: React.ReactNode }) {
+  return right ? <div className="page-head page-bar">{right}</div> : null;
 }
 
 const STATUS_COLOR: Record<string, string> = { Pending: 'gold', Confirmed: 'green', Fulfilled: 'green', Return: 'red', 'Partial Return': 'red', 'Customer cancel': 'purple', Cancelled: 'red' };
@@ -34,12 +29,11 @@ function RangePicker({ lang, range, setRange, custom, setCustom }: { lang: Lang;
   );
 }
 
-function Section({ title, sub, children, defaultOpen }: { title: string; sub?: string; children: React.ReactNode; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(!!defaultOpen);
+function Section({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode; defaultOpen?: boolean }) {
   return (
     <div className="card section">
-      <button className="section-head" onClick={() => setOpen(!open)}><div><b>{title}</b>{sub && <div className="muted small">{sub}</div>}</div><span className={`chev${open ? ' up' : ''}`}><I n="back" size={16} /></span></button>
-      {open && <div className="section-body">{children}</div>}
+      <div className="section-head static"><div><b>{title}</b>{sub && <div className="muted small">{sub}</div>}</div></div>
+      <div className="section-body">{children}</div>
     </div>
   );
 }
@@ -53,6 +47,9 @@ export function DashboardPage({ lang, showToast, go }: P) {
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('none');
   const r = rangeFor(range, custom);
+  const iso = (ms: number) => { const d = new Date(ms); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const [guideDone, setGuideDone] = useState(() => { try { return localStorage.getItem('fp-guide') === '1'; } catch { return false; } });
+  const dismiss = () => { try { localStorage.setItem('fp-guide', '1'); } catch { /* ignore */ } setGuideDone(true); };
   const list = ORDERS.filter(o => o.date >= r.from && o.date < r.to);
   const scoped = scope === 'All statuses' ? list : list.filter(o => (scope === 'Confirmed & Fulfilled' ? o.status === 'Confirmed' || o.status === 'Fulfilled' : o.status === scope || (scope === 'Returned / RTO' && o.status === 'Return') || (scope === 'Cancelled' && o.status === 'Cancelled')));
   const cnt = (f: (o: DOrder) => boolean) => list.filter(f).length;
@@ -77,11 +74,15 @@ export function DashboardPage({ lang, showToast, go }: P) {
   const steps: [string, string, string, string][] = [['1', 'Connect Shopify', 'Link your store so orders flow in', 'settings'], ['2', 'Connect WhatsApp', 'Pair the number customers will hear from', 'settings'], ['3', 'Set up messages', 'Approve confirmation and follow-up templates', 'templates'], ['4', 'Turn on Smart Offers', 'Start tracked upsell after each order', 'automations']];
   return (
     <div className="dash">
-      <Head title={tr(lang, 'Dashboard', 'لوحة التحكم')} sub={tr(lang, 'How your store is doing right now.', 'حال متجرك دلوقتي.')} right={<RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />} />
-      <div className="card guide">
-        <div className="row-between"><div><h3 className="h3">Get started in 4 steps</h3><p className="muted small" style={{ margin: '2px 0 0' }}>Tap a step to jump straight in.</p></div><span className="chip">Step 1 of 4</span></div>
-        <div className="guide-steps">{steps.map(([n, t, d, k]) => <button key={n} className="guide-step" onClick={() => go(k)}><span className="gs-n">{n}</span><span className="gs-t"><b>{t}</b><small>{d}</small></span><span className="gs-go">›</span></button>)}</div>
+      <div className="card card-pad dash-bar">
+        <div className="chips">{['Today', 'Yesterday', 'Last 7 days', 'Last 30 days', 'This month', 'Last month'].map(k => <button key={k} className={`pill${range === k ? ' on' : ''}`} onClick={() => setRange(k)}>{k}</button>)}</div>
+        <div className="dash-dates"><label>From<input className="inp" type="date" value={iso(r.from)} onChange={e => { setCustom({ from: e.target.value, to: iso(r.to - 86400000) }); setRange('Custom range'); }} /></label><label>To<input className="inp" type="date" value={iso(Math.min(r.to - 86400000, DEMO_NOW))} onChange={e => { setCustom({ from: iso(r.from), to: e.target.value }); setRange('Custom range'); }} /></label></div>
+        <label className="dash-status">Status<select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(x => <option key={x}>{x}</option>)}</select></label>
       </div>
+      {!guideDone && <div className="card guide">
+        <div className="row-between"><div><h3 className="h3">Welcome! Get started in 4 steps</h3><p className="muted small" style={{ margin: '2px 0 0' }}>Tap a step to jump straight in.</p></div><button className="btn btn-ghost btn-sm" onClick={dismiss}>Skip, I know my way</button></div>
+        <div className="guide-steps">{steps.map(([n, t, d, k]) => <button key={n} className="guide-step" onClick={() => { dismiss(); go(k); }}><span className="gs-n">{n}</span><span className="gs-t"><b>{t}</b><small>{d}</small></span><span className="gs-go">›</span></button>)}</div>
+      </div>}
       <div className="kpi-grid kpi-4" style={{ marginTop: 20 }}>
         <div className="card kpi"><div className="small k-t">Total Orders</div><div className="kpi-v">{list.length}</div><div className="small muted">{range}</div></div>
         <div className="card kpi k-blue"><div className="small k-t">Confirmed &amp; Fulfilled</div><div className="kpi-v">{cnt(o => o.status === 'Confirmed' || o.status === 'Fulfilled')}</div><div className="small muted">Moving forward</div></div>
