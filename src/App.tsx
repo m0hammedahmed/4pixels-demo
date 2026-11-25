@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import './style.css';
+import { DashboardPage, OrdersPage, ChatPage, SalesPage as SalesNew, CustomersPage as CustNew, CartsPage as CartsNew, MarketingPage, SmsPage as SmsNew, OffersPage, RetentionPage as RetNew, LoyaltyPage as LoyNew, PlanPage, SettingsPage as SetNew } from './pages';
+import { PublicSite } from './public';
 import { Lang, makeT } from './i18n';
 import {
   ORDERS, Order, CHATS, Conversation, AUTOMATIONS, TEMPLATES, SHIPMENTS,
@@ -34,7 +36,7 @@ const paths: Record<string, string> = {
   back: 'M15 4l-8 8 8 8 1.5-1.5L10 12l6.5-6.5L15 4z',
 };
 
-function I({ n, size = 20 }: { n: string; size?: number }) {
+export function I({ n, size = 20 }: { n: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={n === 'x' || n === 'check' ? 2 : 0} strokeLinecap="round" strokeLinejoin="round">
       {n === 'x' ? <path d={paths.x} /> : n === 'check' ? <path d={paths.check} /> : <path d={paths[n] || ''} fill="currentColor" stroke="none" />}
@@ -61,7 +63,8 @@ export default function App() {
   const t = useMemo(() => makeT(lang), [lang]);
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-  const [page, setPage] = useState<string>('landing');
+  const initial = (typeof location !== 'undefined' && location.hash.replace('#', '')) || 'home';
+  const [page, setPage] = useState<string>(initial === 'landing' ? 'home' : initial);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const showToast = (m: string) => { setToast(m); window.setTimeout(() => setToast(null), 2200); };
@@ -69,20 +72,23 @@ export default function App() {
   const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
   const [notifOpen, setNotifOpen] = useState(false);
 
-  const [connected, setConnected] = useState(false);
+  const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact'];
+  const [connected, setConnected] = useState(initial !== 'home' && !PUB.includes(initial) && initial !== 'login' && initial !== 'connect');
   const go = (p: string) => {
     if (p === 'dashboard' && !connected) p = 'connect';
+    if (p === 'landing') p = 'home';
     setPage(p); setMenuOpen(false); window.scrollTo(0, 0);
+    if (typeof history !== 'undefined') history.replaceState(null, '', '#' + p);
   };
 
   return (
     <div dir={dir} className={dir === 'rtl' ? 'rtl-root' : ''}>
-      {page === 'landing' ? (
-        <Landing t={t} lang={lang} setLang={setLang} go={go} />
+      {PUB.includes(page) ? (
+        <PublicSite lang={lang} setLang={setLang} go={go} page={page} />
       ) : page === 'login' ? (
         <AuthPage mode="login" lang={lang} setLang={setLang} go={go} onDone={() => go(connected ? 'dashboard' : 'connect')} />
       ) : page === 'connect' ? (
-        <ConnectPage lang={lang} setLang={setLang} go={go} onDone={() => { setConnected(true); setPage('dashboard'); }} />
+        <ConnectPage lang={lang} setLang={setLang} go={go} onDone={() => { setConnected(true); go('dashboard'); }} />
       ) : (
         <Shell
           t={t} lang={lang} setLang={setLang} page={page} go={go}
@@ -237,7 +243,7 @@ function Shell(props: {
           ))}
         </div>
         <div className="side-foot">
-          <button className="logout-btn" onClick={() => go('login')}><I n="back" size={18} />{t('nav.logout')}</button>
+          <button className="logout-btn" onClick={() => { setConnected(false); go('login'); }}><I n="back" size={18} />{t('nav.logout')}</button>
         </div>
       </aside>
 
@@ -281,20 +287,20 @@ function Shell(props: {
 
         <div className="content" onClick={() => { if (notifOpen) setNotifOpen(false); }}>
           <div className="trial-banner"><strong>{lang === 'ar' ? 'تجربة مجانية كاملة 5 أيام' : '5-day full-access free trial'}</strong><span>{lang === 'ar' ? 'كل مميزات الـ CRM مفتوحة لحد 30/11/2026' : 'Every CRM feature is unlocked until 11/30/2026.'}</span></div>
-          {pageKey === 'overview' && <Dashboard t={t} lang={lang} go={go} />}
-          {pageKey === 'orders' && <OrdersPage t={t} showToast={showToast} />}
-          {pageKey === 'chats' && <ChatsPage t={t} />}
-          {pageKey === 'automations' && <AutomationsPage t={t} lang={lang} />}
-          {pageKey === 'templates' && <TemplatesPage t={t} showToast={showToast} />}
-          {pageKey === 'loyalty' && <LoyaltyPage t={t} />}
-          {pageKey === 'sms' && <SmsPage t={t} showToast={showToast} />}
-          {pageKey === 'retention' && <RetentionPage t={t} />}
+          {pageKey === 'overview' && <DashboardPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'orders' && <OrdersPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'chats' && <ChatPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'sales' && <SalesNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'customers' && <CustNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'carts' && <CartsNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'templates' && <MarketingPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'sms' && <SmsNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'automations' && <OffersPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'retention' && <RetNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'loyalty' && <LoyNew lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'billing' && <PlanPage lang={lang} showToast={showToast} go={go} />}
+          {pageKey === 'settings' && <SetNew lang={lang} showToast={showToast} go={go} />}
           {pageKey === 'delivery' && <DeliveryPage t={t} />}
-          {pageKey === 'sales' && <SalesPage lang={lang} />}
-          {pageKey === 'customers' && <CustomersPage lang={lang} />}
-          {pageKey === 'carts' && <CartsPage lang={lang} showToast={showToast} />}
-          {pageKey === 'billing' && <BillingPage lang={lang} />}
-          {pageKey === 'settings' && <SettingsPage t={t} lang={lang} showToast={showToast} />}
         </div>
       </div>
     </div>
@@ -406,7 +412,7 @@ function Dashboard({ t, lang, go }: { t: (k: string) => string; lang: Lang; go: 
 }
 
 /* ================= ORDERS ================= */
-function OrdersPage({ t, showToast }: { t: (k: string) => string; showToast: (m: string) => void }) {
+function OrdersPageOld({ t, showToast }: { t: (k: string) => string; showToast: (m: string) => void }) {
   const [filter, setFilter] = useState<string>('all');
   const [sel, setSel] = useState<Order | null>(null);
   const [sentIds, setSentIds] = useState<string[]>([]);
