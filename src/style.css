@@ -800,3 +800,20 @@ table.data tbody tr:hover { background: #f1f5f9; }
 @media (max-width: 900px) { .auth-split { grid-template-columns: 1fr; gap: 24px; } .auth-side { order: 2; } .auth-side h2 { font-size: 26px; } .auth-card { margin: 0 auto !important; } .auth-page { padding: 16px 16px 40px; } }
 .field .lab-row { display: flex; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 6px; } .field .lab-row label { margin: 0; } .link-btn { text-decoration: none !important; }
 .field .lab-row { display: grid !important; grid-template-columns: 1fr auto; gap: 0; margin: 0; } .field .lab-row .link-btn { padding: 0; width: auto; justify-self: end; }
+/* v21 public header */
+.pub-head { background: transparent !important; border-bottom: 0 !important; backdrop-filter: none !important; padding: 14px 32px !important; display: grid !important; grid-template-columns: 1fr auto 1fr; }
+.pub-head .brand { justify-self: start; }
+.pub-head .pub-actions { justify-self: end; }
+.pub-nav { background: rgba(255,255,255,.92); border: 1px solid var(--border); border-radius: 100px; padding: 5px !important; gap: 2px !important; box-shadow: 0 6px 20px rgba(15,23,42,.06); backdrop-filter: blur(10px); }
+.pub-nav button { padding: 9px 18px !important; font-weight: 600; color: #475569 !important; transition: background .15s, color .15s; }
+.pub-nav button:hover { background: #f1f5f9 !important; color: #0f172a !important; }
+.pub-nav button.on, .pub-nav button.on:hover { background: linear-gradient(135deg,#0284c7,#0ea5e9) !important; color: #fff !important; box-shadow: 0 4px 12px rgba(2,132,199,.3); }
+@media (max-width: 900px) {
+  .pub-head { display: flex !important; padding: 10px 14px !important; background: rgba(255,255,255,.95) !important; border-bottom: 1px solid var(--border) !important; }
+  .pub-nav { border-radius: 18px; box-shadow: none; } .pub-nav button { border-radius: 12px !important; }
+}
+.pub-head { background: linear-gradient(#f5f7fb 70%, rgba(245,247,251,0)) !important; }
+.pub-nav .pub-auth-m button { padding: 8px 14px !important; }
+.pub-nav .pub-auth-m .btn-primary { background: linear-gradient(135deg,#0284c7,#0ea5e9) !important; color: #fff !important; }
+.pub-nav .pub-auth-m .btn-ghost { background: #fff !important; color: #0f172a !important; border: 1px solid var(--border) !important; }
+@media (max-width: 900px) { .pub-head { background: rgba(255,255,255,.95) !important; } }
