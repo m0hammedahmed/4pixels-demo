@@ -79,6 +79,7 @@ export function DashboardPage({ lang, showToast, go }: P) {
       <div className="card card-pad dash-bar">
         <div className="chips">{['Today', 'Yesterday', 'Last 7 days', 'Last 30 days', 'This month', 'Last month'].map(k => <button key={k} className={`pill${range === k ? ' on' : ''}`} onClick={() => setRange(k)}>{k}</button>)}</div>
         <div className="dash-dates"><label>From<input className="inp" type="date" value={iso(r.from)} onChange={e => { setCustom({ from: e.target.value, to: iso(r.to - 86400000) }); setRange('Custom range'); }} /></label><label>To<input className="inp" type="date" value={iso(Math.min(r.to - 86400000, DEMO_NOW))} onChange={e => { setCustom({ from: iso(r.from), to: e.target.value }); setRange('Custom range'); }} /></label></div>
+        <button className="btn btn-ghost" onClick={() => showToast('Dashboard report exported (demo)')}>Export</button>
         <label className="dash-status">Status<select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(x => <option key={x}>{x}</option>)}</select></label>
       </div>
       {!guideDone && <div className="card guide">
@@ -137,20 +138,20 @@ export function OrdersPage({ lang, showToast, go }: P) {
   return (
     <div>
       <Head title={tr(lang, 'Orders', 'الأوردرات')} sub={tr(lang, 'Tap an order to see its details.', 'اضغط على أوردر لتشوف تفاصيله.')} />
-      <div className="card strip">
-        <div><span className="muted small">Filtered net sales</span><b>{fmtMoney(net)}</b><span className="chip green">{ful.length} fulfilled</span></div>
-        <div><span className="muted small">Filtered net profit</span><b>{fmtMoney(prof)}</b></div>
-        <button className="link-btn" onClick={() => setInfo(!info)}>{info ? 'Hide' : 'How is this calculated?'}</button>
-        {info && <p className="muted small strip-note">Net sales: product value from fulfilled orders after Shopify discounts and returns, excluding shipping, taxes and cancellations. Net profit: net sales minus product cost and recorded shipping. Ads and operating expenses are not deducted.</p>}
+      <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+        <div className="card kpi k-blue"><div className="small k-t">Net sales <button className="info-dot" title="Product value from fulfilled orders after discounts and returns. Excludes shipping, taxes and cancellations." onClick={() => setInfo(!info)}>i</button></div><div className="kpi-v">{fmtMoney(net)}</div><div className="small muted">{ful.length} fulfilled orders</div></div>
+        <div className="card kpi"><div className="small k-t">Net profit <button className="info-dot" title="Net sales minus product cost and shipping. Ads and operating expenses are not deducted." onClick={() => setInfo(!info)}>i</button></div><div className="kpi-v green-t">{fmtMoney(prof)}</div><div className="small muted">After product cost and shipping</div></div>
+        <div className="card kpi"><div className="small k-t">Orders in view</div><div className="kpi-v">{list.length}</div><div className="small muted">Matching your filters</div></div>
       </div>
+      {info && <p className="muted small" style={{ margin: '-4px 4px 14px' }}>Net sales: product value from fulfilled orders after Shopify discounts and returns, excluding shipping, taxes and cancellations. Net profit: net sales minus product cost and recorded shipping. Ads and operating expenses are not deducted.</p>}
       <div className="tool-row">
-        <select className="inp narrow" value={field} onChange={e => setField(e.target.value)}><option>Order #</option><option>Phone</option><option>All fields</option></select>
-        <input className="inp grow" placeholder="Search by order number, e.g. 12500" value={q} onChange={e => setQ(e.target.value)} />
+        <input className="inp grow" placeholder="Search by order # or phone" value={q} onChange={e => setQ(e.target.value)} />
         <button className={`btn btn-ghost${filt ? ' on' : ''}`} onClick={() => setFilt(!filt)}>Filters</button>
       </div>
       {filt && (
         <div className="toolbar">
           <RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />
+          <div className="range-box"><label className="lbl">Search in</label><select className="inp" value={field} onChange={e => setField(e.target.value)}><option>Order #</option><option>Phone</option><option>All fields</option></select></div>
           <div className="range-box"><label className="lbl">Order source</label><select className="inp" value={source} onChange={e => setSource(e.target.value)}>{['All sources', 'Recovered abandoned checkout', 'Abandoned message', 'Direct / Other', 'Shopify'].map(s => <option key={s}>{s}</option>)}</select></div>
           <div className="range-box"><label className="lbl">Sort by</label><select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['Newest first', 'Oldest first', 'Order number high to low', 'Highest value', 'Lowest value'].map(s => <option key={s}>{s}</option>)}</select></div>
           <button className="btn btn-ghost btn-sm" onClick={() => { setQ(''); setTab('All'); setSource('All sources'); setRange('All time'); }}>Clear filters</button>
@@ -163,8 +164,7 @@ export function OrdersPage({ lang, showToast, go }: P) {
         <span className="muted small">{Math.min(shown, list.length)} of {list.length} orders{sel.length ? ` · ${sel.length} selected` : ''}</span>
         <div className="btn-row">
           <button className="btn btn-ghost btn-sm" onClick={() => setSel(sel.length ? [] : list.slice(0, shown).map(o => o.id))}>{sel.length ? 'Clear selection' : 'Select visible'}</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported filtered orders (demo)')}>Export filtered</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported all orders (demo)')}>Export all</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported orders to Excel (demo)')}>Export</button>
           <button className="btn btn-primary btn-sm" disabled={!sel.length} onClick={() => { showToast(`Confirmation sent to ${sel.length} orders`); setSel([]); }}>Send confirmation</button>
         </div>
       </div>
@@ -385,6 +385,7 @@ export function CartsPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="" title="Abandoned Checkouts" sub="Auto-send follows up on checkout drop-offs after the safe delay, skips completed orders, and keeps recovery tracking visible." right={<button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button>} />
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo)')}>Export</button></div>
       <div className="two-col-flex">
         <div className="card card-pad grow">
           <p className="eyebrow">ABANDONED RECOVERY</p><h3 className="h3">Template, variables, preview</h3><p className="muted small">Choose the approved Meta template, map its variables, and save.</p>
@@ -447,6 +448,7 @@ export function SmsPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="SMS" title="Create & manage SMS campaigns" sub="Send promotional offers, new arrivals, order updates and more. Reach your customers instantly with a clean prepaid wallet flow." />
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('SMS report exported (demo)')}>Export</button></div>
       <div className="card card-pad tint-blue"><b>Gateway connected · 4PIXELS master SMS account</b><p className="muted small" style={{ margin: '4px 0 0' }}>Sender awaiting provider approval: DEMOSTORE. Sending is blocked until the sender name is approved. 4PIXELS will not switch the sender name automatically.</p></div>
       <div className="kpi-grid kpi-4" style={{ marginTop: 14 }}>{[['SMS Wallet', String(balance), 'Credits available'], ['Recipients Now', String(recipients), 'Deduped by phone'], ['SMS Parts Needed', String(recipients * parts), `${parts} max per customer`], ['Estimated Cost', cost.toFixed(2) + ' EGP', '1.50 EGP per part']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}><div className="row-between"><h3 className="h3">Prepaid SMS Wallet</h3><span className={`chip ${balance > 0 ? 'green' : 'red'}`}>{balance > 0 ? 'Sending unlocked' : 'Sending locked'}</span></div><p className="muted small">Recharge your balance to start sending campaigns. Available: {balance} credits · 1.50 EGP per credit</p>
@@ -478,6 +480,7 @@ export function OffersPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="SMART OFFER" title="Choose a Smart Offer flow" sub="Each flow has its own switch, settings, and save action." />
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Smart Offers report exported (demo)')}>Export</button></div>
       <div className="two-box">{([['up', 'Upsell & Cross-sell', 'Post-confirmation offers for complementary or additional products.'], ['cancel', 'Cancellation Recovery', 'Recovery offers only after a real Shopify cancellation.']] as const).map(([k, t, d]) => <button key={k} className={`flow-card${flow === k ? ' on' : ''}`} onClick={() => setFlow(k)}><b>{t}</b><span className="muted small">{d}</span><span className={`chip ${en[k] ? 'green' : 'grey'}`}>{en[k] ? 'Enabled' : 'Disabled'}</span></button>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}>
         <p className="eyebrow">SMART OFFERS</p><h3 className="h3">{flow === 'up' ? 'Send a catalog-wide, tracked WhatsApp cross-sell after every confirmed order.' : 'Win back customers after a Shopify cancellation.'}</h3>
@@ -509,6 +512,7 @@ export function RetentionPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="GROWTH AUTOMATION" title="Customer Retention" sub="Bring recent buyers back automatically. Every week, eligible customers receive a private one-time Shopify discount with a polished Meta marketing message." right={<div className="btn-row"><span className={`chip ${on ? 'green' : 'grey'}`}>{on ? 'Automation active' : 'Automation paused'}</span><span className="muted small">Next run: {on ? 'Mon 10:00' : '—'}</span><button className="btn btn-primary btn-sm" onClick={() => showToast('Run started (demo)')}>Run now</button></div>} />
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Retention report exported (demo)')}>Export</button></div>
 <Section title="Results" sub="Offers issued, messages sent, conversions">      <div className="kpi-grid kpi-4">{[['ACTIVE OFFERS', '0'], ['ISSUED', '83'], ['MESSAGES SENT', '0'], ['CLICKED', '0'], ['CONVERTED', '0'], ['FAILED', '83'], ['RECOVERED REVENUE', '0 EGP']].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div></Section>
       <p className="muted small">Orders placed after a retention message are matched back to the customer automatically.</p>
       <div className="card card-pad" style={{ marginTop: 14 }}><p className="eyebrow">AUTOMATION RULES</p><div className="row-between"><h3 className="h3">Who should receive the weekly offer?</h3><label className="switch-row"><input type="checkbox" checked={on} onChange={e => setOn(e.target.checked)} />Enabled</label></div><p className="muted small">No customer picking. The CRM builds the audience automatically from recent orders. Up to 400 customers can be contacted in each weekly run.</p>

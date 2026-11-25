@@ -701,3 +701,9 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .gbar { height: 6px; background: #e0f2fe; border-radius: 6px; margin-top: 10px; max-width: 320px; overflow: hidden; } .gbar i { display: block; height: 100%; background: #0284c7; transition: width .3s; }
 .guide-step.done { background: #f0fdf4; border-color: #bbf7d0; } .guide-step.done .gs-n { background: #16a34a; }
 .dash .brk { width: 100%; } .dash .brk-row { width: 100%; }
+.info-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #94a3b8; color: #64748b; font-size: 10px; font-weight: 800; background: #fff; margin-inline-start: 6px; cursor: help; line-height: 1; }
+.green-t { color: #15803d; }
+.page-bar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px; }
+@media (max-width: 700px) { .kpi-grid[style*="repeat(3"] { grid-template-columns: 1fr 1fr !important; } .kpi-grid[style*="repeat(3"] > :last-child { grid-column: 1 / -1; } }
+.dash-bar { justify-content: flex-start; } .dash-bar .chips { flex-basis: 100%; } .dash-bar > .btn { margin-inline-start: auto; }
+@media (max-width: 560px) { .dash-bar > .btn { margin: 0; width: 100%; } }
