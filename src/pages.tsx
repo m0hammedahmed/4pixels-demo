@@ -407,8 +407,6 @@ export function MarketingPage({ lang, showToast, go }: P) {
   const elig = ORDERS.slice(0, 12);
   return (
     <div>
-      <div className="card card-pad tint-green"><b>Free Marketing workspace</b><p className="muted small" style={{ margin: '4px 0 0' }}>No 4PIXELS monthly plan. WhatsApp campaigns are included, and you pay only when buying prepaid SMS credits. Any Meta messaging fees are billed separately to your own WhatsApp Business account.</p></div>
-      <div className="card card-pad" style={{ marginTop: 14 }}><div className="row-between wrap"><div><span className="chip blue">SMS</span><h3 className="h3">Prepaid SMS campaigns</h3><p className="muted small" style={{ margin: 0 }}>Send customer updates by SMS with balance checks, recharge visibility, test send, and live preview.</p></div><button className="btn btn-primary" onClick={() => go('sms')}>Open SMS</button></div></div>
       <Head eyebrow="CAMPAIGN STUDIO" title="WhatsApp Campaigns" sub="Choose a template, build the audience, personalize the data, and review every send from one workspace." right={<button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button>} />
       <div className="kpi-grid kpi-4">{[['META LIMIT', '∞'], ['META USED 24H', '0'], ['META REMAINING', '∞'], ['CONSENTED', String(picked.length ? picked.length : 0)], ['CAMPAIGN AUDIENCE', String(picked.length)]].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
       <div className="stepper wide">{steps.map((s, i) => <button key={s} className={`st${step === i + 1 ? ' cur' : step > i + 1 ? ' done' : ''}`} onClick={() => setStep(i + 1)}><span>{step > i + 1 ? '✓' : i + 1}</span>{s}</button>)}</div>
