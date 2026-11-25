@@ -248,7 +248,7 @@ export function ChatPage({ lang, showToast }: P) {
   const [chan, setChan] = useState('All');
   const [filter, setFilter] = useState('All');
   const [q, setQ] = useState('');
-  const [sel, setSel] = useState<number | null>(null);
+  const [sel, setSel] = useState<number | null>(typeof window !== 'undefined' && window.innerWidth > 900 ? ORDERS[0].id : null);
   const [draft, setDraft] = useState('');
   const [sent, setSent] = useState<Record<number, string[]>>({});
   const [read, setRead] = useState<number[]>([]);
