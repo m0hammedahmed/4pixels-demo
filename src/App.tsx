@@ -289,7 +289,6 @@ function Shell(props: {
         )}
 
         <div className={`content${pageKey === 'chats' ? ' content-wide' : ''}`} onClick={() => { if (notifOpen) setNotifOpen(false); }}>
-          {pageKey === 'overview' && <div className="trial-banner"><strong>{lang === 'ar' ? 'تجربة مجانية كاملة 5 أيام' : '5-day full-access free trial'}</strong><span>{lang === 'ar' ? 'كل مميزات الـ CRM مفتوحة لحد 30/11/2026' : 'Every CRM feature is unlocked until 11/30/2026.'}</span></div>}
           {pageKey === 'overview' && <DashboardPage lang={lang} showToast={showToast} go={go} />}
           {pageKey === 'orders' && <OrdersPage lang={lang} showToast={showToast} go={go} />}
           {pageKey === 'chats' && <ChatPage lang={lang} showToast={showToast} go={go} />}

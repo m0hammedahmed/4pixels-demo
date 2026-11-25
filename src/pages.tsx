@@ -69,45 +69,37 @@ export function DashboardPage({ lang, showToast, go }: P) {
     rows.sort((a, b) => (sort === 'az' ? a.name.localeCompare(b.name) : sort === 'za' ? b.name.localeCompare(a.name) : mode === 'revenue' ? b.value - a.value : b.qty - a.qty));
     return rows;
   }, [scoped, q, sort, mode]);
+  const stat: [string, number, string][] = [['Pending', cnt(o => o.status === 'Pending'), 'gold'], ['Confirmed', cnt(o => o.status === 'Confirmed'), 'green'], ['Fulfilled', cnt(o => o.status === 'Fulfilled'), 'blue'], ['Returned / RTO', cnt(o => o.status === 'Return' || o.status === 'Partial Return'), 'orange'], ['Customer cancel request', cnt(o => o.status === 'Customer cancel'), 'purple'], ['Cancelled on Shopify', cnt(o => o.status === 'Cancelled'), 'red']];
+  const days = Array.from({ length: 14 }, (_, i) => { const from = r.to - (14 - i) * 86400000; return { d: new Date(from), n: ORDERS.filter(o => o.date >= from && o.date < from + 86400000).length }; });
+  const maxN = Math.max(1, ...days.map(d => d.n));
+  const recent = [...scoped].sort((a, b) => b.date - a.date).slice(0, 5);
+  const top = products.slice(0, 5); const topMax = Math.max(1, ...top.map(p => mode === 'revenue' ? p.value : p.qty));
+  const steps: [string, string, string, string][] = [['1', 'Connect Shopify', 'Link your store so orders flow in', 'settings'], ['2', 'Connect WhatsApp', 'Pair the number customers will hear from', 'settings'], ['3', 'Set up messages', 'Approve confirmation and follow-up templates', 'templates'], ['4', 'Turn on Smart Offers', 'Start tracked upsell after each order', 'automations']];
   return (
-    <div>
-      <Head title={tr(lang, 'Dashboard', 'لوحة التحكم')} sub={tr(lang, 'Your orders at a glance. Open a section to see more.', 'أوردراتك في نظرة واحدة. افتح أي قسم لتفاصيل أكتر.')} />
-      <div className="toolbar">
-        <RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />
-        <div className="range-box"><label className="lbl">{tr(lang, 'Order status', 'حالة الأوردر')}</label>
-          <select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(s => <option key={s}>{s}</option>)}</select></div>
+    <div className="dash">
+      <Head title={tr(lang, 'Dashboard', 'لوحة التحكم')} sub={tr(lang, 'How your store is doing right now.', 'حال متجرك دلوقتي.')} right={<RangePicker lang={lang} range={range} setRange={setRange} custom={custom} setCustom={setCustom} />} />
+      <div className="card guide">
+        <div className="row-between"><div><h3 className="h3">Get started in 4 steps</h3><p className="muted small" style={{ margin: '2px 0 0' }}>Tap a step to jump straight in.</p></div><span className="chip">Step 1 of 4</span></div>
+        <div className="guide-steps">{steps.map(([n, t, d, k]) => <button key={n} className="guide-step" onClick={() => go(k)}><span className="gs-n">{n}</span><span className="gs-t"><b>{t}</b><small>{d}</small></span><span className="gs-go">›</span></button>)}</div>
       </div>
-      <div className="kpi-grid kpi-4">
+      <div className="kpi-grid kpi-4" style={{ marginTop: 20 }}>
         <div className="card kpi"><div className="small k-t">Total Orders</div><div className="kpi-v">{list.length}</div><div className="small muted">{range}</div></div>
-        <div className="card kpi k-blue"><div className="small k-t">Confirmed &amp; Fulfilled</div><div className="kpi-v">{cnt(o => o.status === 'Confirmed' || o.status === 'Fulfilled')}</div><div className="small muted">Orders moving forward</div></div>
+        <div className="card kpi k-blue"><div className="small k-t">Confirmed &amp; Fulfilled</div><div className="kpi-v">{cnt(o => o.status === 'Confirmed' || o.status === 'Fulfilled')}</div><div className="small muted">Moving forward</div></div>
         <div className="card kpi dark"><div className="small">All order value</div><div className="kpi-v">{fmtMoney(sum(() => true))}</div><div className="small op">Every status</div></div>
         <div className="card kpi blue"><div className="small">Requested Revenue</div><div className="kpi-v">{fmtMoney(sum(o => o.status === 'Pending' || o.status === 'Confirmed'))}</div><div className="small op">Pending and confirmed</div></div>
       </div>
-      <Section title={tr(lang, 'Status breakdown', 'تفصيل الحالات')} sub={tr(lang, 'Pending, returns, and cancellations', 'المعلّق والمرتجع والملغي')} defaultOpen>
-        <div className="brk">
-          {[['Pending', cnt(o => o.status === 'Pending'), 'gold'], ['Confirmed', cnt(o => o.status === 'Confirmed'), 'green'], ['Returned / RTO', cnt(o => o.status === 'Return' || o.status === 'Partial Return'), 'orange'], ['Customer cancel request', cnt(o => o.status === 'Customer cancel'), 'purple'], ['Cancelled on Shopify', cnt(o => o.status === 'Cancelled'), 'red']].map(([k, v, c]) => (
-            <div className="brk-row" key={String(k)}><span className={`dot d-${c}`} /><span className="grow">{k}</span><b>{v as number}</b><div className="bar"><i className={`d-${c}`} style={{ width: `${list.length ? ((v as number) / list.length) * 100 : 0}%` }} /></div></div>
-          ))}
-        </div>
-      </Section>
-      <Section title={tr(lang, 'Product stats', 'إحصائيات المنتجات')} sub={tr(lang, 'Calculated from order line items. Search, sort and export.', 'من بنود الأوردرات. بحث وترتيب وتصدير.')}>
-        <div className="seg" style={{ marginBottom: 12 }}><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>By revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>By quantity</button></div>
-        <div className="tool-row">
-          <input className="inp grow" placeholder="Single Search" value={q} onChange={e => setQ(e.target.value)} />
-          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Multi search: paste several product names')}>Multi Search</button>
-          <select className="inp" value={sort} onChange={e => setSort(e.target.value)}><option value="none">No alphabetical sort</option><option value="az">A to Z</option><option value="za">Z to A</option></select>
-          <button className="btn btn-ghost btn-sm" onClick={() => { setQ(''); setSort('none'); setScope('All statuses'); }}>Clear filters</button>
-          <button className="btn btn-primary btn-sm" onClick={() => showToast('Exported filtered products (demo)')}>Export filtered</button>
-        </div>
-        <div className="stat-row">
-          <div><span className="muted small">Requested products</span><b>{products.length}</b></div>
-          <div><span className="muted small">Total quantity</span><b>{products.reduce((s, p) => s + p.qty, 0)}</b></div>
-          <div><span className="muted small">Products value</span><b>{fmtMoney(products.reduce((s, p) => s + p.value, 0))}</b></div>
-        </div>
-        <div className="table-wrap"><table className="data"><thead><tr><th>Product</th><th>Qty</th><th>Orders</th><th>Value</th><th>Unit price</th></tr></thead>
-          <tbody>{products.map(p => <tr key={p.name}><td>{p.name}</td><td>{p.qty}</td><td>{p.orders}</td><td>{fmtMoney(p.value)}</td><td>{fmtMoney(p.unit)}</td></tr>)}
-            {products.length === 0 && <tr><td colSpan={5} className="muted">No orders in this range.</td></tr>}</tbody></table></div>
-      </Section>
+      <div className="dash-cols">
+        <div className="card card-pad"><h3 className="h3">Orders per day</h3><p className="muted small" style={{ margin: '2px 0 14px' }}>Last 14 days of the range</p>
+          <div className="daybars">{days.map((d, i) => <div key={i} className="daybar"><i style={{ height: `${(d.n / maxN) * 100}%` }} /><span>{d.d.getDate()}</span></div>)}</div></div>
+        <div className="card card-pad"><h3 className="h3">By status</h3><div className="brk" style={{ marginTop: 12 }}>
+          {stat.map(([k, v, c]) => <div className="brk-row" key={k}><span className={`dot d-${c}`} /><span className="grow">{k}</span><b>{v}</b></div>)}</div></div>
+      </div>
+      <div className="dash-cols">
+        <div className="card card-pad"><div className="row-between"><h3 className="h3">Latest orders</h3><button className="btn btn-ghost btn-sm" onClick={() => go('orders')}>View all</button></div>
+          <div className="mini-list">{recent.map(o => <div key={o.id} className="mini-row"><b>#{o.id}</b><span className="grow">{o.name}</span><span className="muted small">{o.status}</span><b>{fmtMoney(o.total)}</b></div>)}{recent.length === 0 && <p className="muted small">No orders in this range.</p>}</div></div>
+        <div className="card card-pad"><div className="row-between"><h3 className="h3">Top products</h3><div className="seg"><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>Revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>Quantity</button></div></div>
+          <div className="mini-list">{top.map(p => <div key={p.name} className="top-row"><div className="row-between"><span>{p.name}</span><b>{mode === 'revenue' ? fmtMoney(p.value) : p.qty}</b></div><div className="bar"><i className="d-blue" style={{ width: `${((mode === 'revenue' ? p.value : p.qty) / topMax) * 100}%` }} /></div></div>)}</div></div>
+      </div>
     </div>
   );
 }
