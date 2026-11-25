@@ -79,7 +79,7 @@ export function DashboardPage({ lang, showToast, go }: P) {
       <div className="card card-pad dash-bar">
         <div className="chips">{['Today', 'Yesterday', 'Last 7 days', 'Last 30 days', 'This month', 'Last month'].map(k => <button key={k} className={`pill${range === k ? ' on' : ''}`} onClick={() => setRange(k)}>{k}</button>)}</div>
         <div className="dash-dates"><label>From<input className="inp" type="date" value={iso(r.from)} onChange={e => { setCustom({ from: e.target.value, to: iso(r.to - 86400000) }); setRange('Custom range'); }} /></label><label>To<input className="inp" type="date" value={iso(Math.min(r.to - 86400000, DEMO_NOW))} onChange={e => { setCustom({ from: iso(r.from), to: e.target.value }); setRange('Custom range'); }} /></label></div>
-        <button className="btn btn-ghost" onClick={() => showToast('Dashboard report exported (demo)')}>Export</button>
+        <button className="btn btn-ghost" onClick={() => showToast('Dashboard report exported (demo, no real file)')}>Export</button>
         <label className="dash-status">Status<select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(x => <option key={x}>{x}</option>)}</select></label>
       </div>
       {!guideDone && <div className="card guide">
@@ -164,7 +164,7 @@ export function OrdersPage({ lang, showToast, go }: P) {
         <span className="muted small">{Math.min(shown, list.length)} of {list.length} orders{sel.length ? ` · ${sel.length} selected` : ''}</span>
         <div className="btn-row">
           <button className="btn btn-ghost btn-sm" onClick={() => setSel(sel.length ? [] : list.slice(0, shown).map(o => o.id))}>{sel.length ? 'Clear selection' : 'Select visible'}</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported orders to Excel (demo)')}>Export</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => showToast('Exported orders to Excel (demo, no real file)')}>Export</button>
           <button className="btn btn-primary btn-sm" disabled={!sel.length} onClick={() => { showToast(`Confirmation sent to ${sel.length} orders`); setSel([]); }}>Send confirmation</button>
         </div>
       </div>
@@ -336,7 +336,7 @@ export function SalesPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="Verified from Shopify" title="Exact Shopify Sales" sub={tr(lang, 'Figures come from ShopifyQL using Shopify report definitions.', 'الأرقام مأخوذة من ShopifyQL حسب تعريفات تقارير Shopify.')}
-        right={<div className="btn-row"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Report refreshed')}>Refresh Report</button><button className="btn btn-primary btn-sm" onClick={() => showToast('Excel exported (demo)')}>Export Excel</button></div>} />
+        right={<div className="btn-row"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Report refreshed')}>Refresh Report</button><button className="btn btn-primary btn-sm" onClick={() => showToast('Excel exported (demo, no real file)')}>Export Excel</button></div>} />
       <div className="card card-pad filter-bar"><div className="range-box"><label className="lbl">Start Date</label><input type="date" className="inp" value={from} onChange={e => setFrom(e.target.value)} /></div><div className="range-box"><label className="lbl">End Date</label><input type="date" className="inp" value={to} onChange={e => setTo(e.target.value)} /></div><div className="range-box"><span className="muted small">Source: ShopifyQL • demo-store.myshopify.com • Africa/Cairo</span></div></div>
       <div className="card card-pad" style={{ marginTop: 16 }}>
         <div className="row-between wrap"><div><h3 className="h3">Bosta Delivery Verification</h3><p className="muted small" style={{ margin: 0 }}>An order counts as received only when Bosta confirms delivery. Fulfilled in Shopify is not proof of delivery or cash collection.</p></div><div className="btn-row"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Opening Bosta settings')}>Bosta Settings</button><button className="btn btn-primary btn-sm" onClick={() => showToast('Verified delivery statuses synced')}>Sync Verified Delivery Statuses</button></div></div>
@@ -371,7 +371,7 @@ export function CustomersPage({ lang, showToast, go }: P) {
       <div className="tool-row"><input className="inp grow" placeholder="Search by name or phone" value={q} onChange={e => setQ(e.target.value)} />
         <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['Latest message', 'Latest activity', 'Created at', 'Name', 'Customer value'].map(x => <option key={x}>{x}</option>)}</select>
         <select className="inp" value={risk} onChange={e => setRisk(e.target.value)}>{['All risk levels', 'Guard active', 'High risk', 'Cancelled before', 'Returned before', 'Not received before'].map(x => <option key={x}>{x}</option>)}</select></div>
-      <div className="btn-row" style={{ margin: '12px 0' }}><button className="btn btn-primary btn-sm" onClick={() => showToast('Add customer form (demo)')}>Add customer</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Shopify customers synced')}>Sync Shopify</button><button className={`btn btn-sm ${consent ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setConsent(!consent); showToast(consent ? 'Marketing consent disabled' : 'Marketing consent enabled'); }}>{consent ? 'Marketing Consent On' : 'Enable Marketing Consent'}</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Customers exported (demo)')}>Export customers</button></div>
+      <div className="btn-row" style={{ margin: '12px 0' }}><button className="btn btn-primary btn-sm" onClick={() => showToast('Add customer form (demo)')}>Add customer</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Shopify customers synced')}>Sync Shopify</button><button className={`btn btn-sm ${consent ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setConsent(!consent); showToast(consent ? 'Marketing consent disabled' : 'Marketing consent enabled'); }}>{consent ? 'Marketing Consent On' : 'Enable Marketing Consent'}</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Customers exported (demo, no real file)')}>Export customers</button></div>
       <div className="cust-grid">{list.slice(0, 30).map((c, i) => (
         <div className="card cust-card" key={c.phone}><div className="av">{c.name[0]}<span className="num">{i + 1}</span></div>
           <div className="grow"><div className="row-between"><b>{c.name}</b><span className={`chip ${c.risk === 'Regular' ? 'grey' : 'red'}`}>{c.risk}</span></div><div className="muted small"><span className={`chip ${c.msgs % 7 === 0 ? 'grey' : 'green'}`} style={{ marginInlineEnd: 6 }}>{c.msgs % 7 === 0 ? 'Opted out' : 'Opted in'}</span>Bosta · {c.orders === 1 ? 'New customer' : `${c.bosta}%`}</div><div className="small">{c.phone}</div><div className="muted small">{ago(c.last)}</div>
@@ -390,7 +390,7 @@ export function CartsPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="" title="Abandoned Checkouts" sub="Auto-send follows up on checkout drop-offs after the safe delay, skips completed orders, and keeps recovery tracking visible." right={<button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button>} />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo)')}>Export</button></div>
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo, no real file)')}>Export</button></div>
       <div className="two-col-flex">
         <div className="card card-pad grow">
           <p className="eyebrow">ABANDONED RECOVERY</p><h3 className="h3">Template, variables, preview</h3><p className="muted small">Choose the approved Meta template, map its variables, and save.</p>
@@ -453,7 +453,7 @@ export function SmsPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="SMS" title="Create & manage SMS campaigns" sub="Send promotional offers, new arrivals, order updates and more. Reach your customers instantly with a clean prepaid wallet flow." />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('SMS report exported (demo)')}>Export</button></div>
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('SMS report exported (demo, no real file)')}>Export</button></div>
       <div className="card card-pad tint-blue"><b>Gateway connected · 4PIXELS master SMS account</b><p className="muted small" style={{ margin: '4px 0 0' }}>Sender awaiting provider approval: DEMOSTORE. Sending is blocked until the sender name is approved. 4PIXELS will not switch the sender name automatically.</p></div>
       <div className="kpi-grid kpi-4" style={{ marginTop: 14 }}>{[['SMS Wallet', String(balance), 'Credits available'], ['Recipients Now', String(recipients), 'Deduped by phone'], ['SMS Parts Needed', String(recipients * parts), `${parts} max per customer`], ['Estimated Cost', cost.toFixed(2) + ' EGP', '1.50 EGP per part']].map(([k, v, s]) => <div className="card kpi" key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div><div className="muted small">{s}</div></div>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}><div className="row-between"><h3 className="h3">Prepaid SMS Wallet</h3><span className={`chip ${balance > 0 ? 'green' : 'red'}`}>{balance > 0 ? 'Sending unlocked' : 'Sending locked'}</span></div><p className="muted small">Recharge your balance to start sending campaigns. Available: {balance} credits · 1.50 EGP per credit</p>
@@ -485,7 +485,7 @@ export function OffersPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="SMART OFFER" title="Choose a Smart Offer flow" sub="Each flow has its own switch, settings, and save action." />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Smart Offers report exported (demo)')}>Export</button></div>
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Smart Offers report exported (demo, no real file)')}>Export</button></div>
       <div className="two-box">{([['up', 'Upsell & Cross-sell', 'Post-confirmation offers for complementary or additional products.'], ['cancel', 'Cancellation Recovery', 'Recovery offers only after a real Shopify cancellation.']] as const).map(([k, t, d]) => <button key={k} className={`flow-card${flow === k ? ' on' : ''}`} onClick={() => setFlow(k)}><b>{t}</b><span className="muted small">{d}</span><span className={`chip ${en[k] ? 'green' : 'grey'}`}>{en[k] ? 'Enabled' : 'Disabled'}</span></button>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}>
         <p className="eyebrow">SMART OFFERS</p><h3 className="h3">{flow === 'up' ? 'Send a catalog-wide, tracked WhatsApp cross-sell after every confirmed order.' : 'Win back customers after a Shopify cancellation.'}</h3>
@@ -517,7 +517,7 @@ export function RetentionPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="GROWTH AUTOMATION" title="Customer Retention" sub="Bring recent buyers back automatically. Every week, eligible customers receive a private one-time Shopify discount with a polished Meta marketing message." right={<div className="btn-row"><span className={`chip ${on ? 'green' : 'grey'}`}>{on ? 'Automation active' : 'Automation paused'}</span><span className="muted small">Next run: {on ? 'Mon 10:00' : '—'}</span><button className="btn btn-primary btn-sm" onClick={() => showToast('Run started (demo)')}>Run now</button></div>} />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Retention report exported (demo)')}>Export</button></div>
+      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Retention report exported (demo, no real file)')}>Export</button></div>
 <Section title="Results" sub="Offers issued, messages sent, conversions">      <div className="kpi-grid kpi-4">{[['ACTIVE OFFERS', '0'], ['ISSUED', '83'], ['MESSAGES SENT', '0'], ['CLICKED', '0'], ['CONVERTED', '0'], ['FAILED', '83'], ['RECOVERED REVENUE', '0 EGP']].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div></Section>
       <p className="muted small">Orders placed after a retention message are matched back to the customer automatically.</p>
       <div className="card card-pad" style={{ marginTop: 14 }}><p className="eyebrow">AUTOMATION RULES</p><div className="row-between"><h3 className="h3">Who should receive the weekly offer?</h3><label className="switch-row"><input type="checkbox" checked={on} onChange={e => setOn(e.target.checked)} />Enabled</label></div><p className="muted small">No customer picking. The CRM builds the audience automatically from recent orders. Up to 400 customers can be contacted in each weekly run.</p>
@@ -629,7 +629,8 @@ export function ProductsPage({ lang, showToast }: P) {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const terms = mode === 'Multi Search' ? q.split(',').map(x => x.trim().toLowerCase()).filter(Boolean) : q.trim() ? [q.trim().toLowerCase()] : [];
-  let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i] })).filter(x => !terms.length || terms.some(t => x.n.toLowerCase().includes(t)));
+  const nf = from ? parseInt(from, 10) : 0, nt = to ? parseInt(to, 10) : 1e9;
+  let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i], lo: 12400 + i * 9, hi: 12539 - i * 4 })).filter(x => (!terms.length || terms.some(t => x.n.toLowerCase().includes(t))) && (isNaN(nf) || nf <= x.hi) && (isNaN(nt) || nt >= x.lo));
   if (sort === 'A to Z') list = [...list].sort((a, b) => a.n.localeCompare(b.n));
   if (sort === 'Z to A') list = [...list].sort((a, b) => b.n.localeCompare(a.n));
   const clear = () => { setQ(''); setSort('No alphabetical sort'); setFrom(''); setTo(''); };
@@ -641,7 +642,7 @@ export function ProductsPage({ lang, showToast }: P) {
           <div className="seg">{(['Single Search', 'Multi Search'] as const).map(m => <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{tr(lang, m, m === 'Single Search' ? 'بحث واحد' : 'بحث متعدد')}</button>)}</div>
           <input className="inp" placeholder={mode === 'Single Search' ? 'Search products by name...' : 'Search several products, separated by commas'} value={q} onChange={e => setQ(e.target.value)} />
         </div>
-        <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo)')}><I n="orders" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
+        <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo, no real file)')}><I n="orders" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
       </div>
       <div className="card prod-filters">
         <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['No alphabetical sort', 'A to Z', 'Z to A'].map(x => <option key={x}>{x}</option>)}</select>

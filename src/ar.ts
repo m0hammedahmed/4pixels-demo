@@ -1,0 +1,61 @@
+const D: Record<string, string> = {
+'fulfilled orders':'أوردر مشحون','of 4 done.':'من 4 تمت.','chats ·':'محادثة ·','unread':'غير مقروء','Delivered':'تم التسليم','Bosta ·':'بوسطة ·','Order #':'أوردر #','orders':'أوردر','Today':'اليوم','Yesterday':'امبارح','Last 7 days':'آخر 7 أيام','Last 30 days':'آخر 30 يوم','This month':'الشهر ده','Last month':'الشهر اللي فات','From':'من','To':'إلى','Export':'تصدير','Status':'الحالة','All statuses':'كل الحالات',
+'Pending':'قيد الانتظار','Confirmed':'مؤكد','Confirmed & Fulfilled':'مؤكد ومشحون','Returned / RTO':'مرتجع / RTO','Customer cancel':'إلغاء العميل','Cancelled':'ملغي','Customer cancel request':'طلب إلغاء من العميل','Cancelled on Shopify':'ملغي على Shopify','Fulfilled':'تم الشحن','Fulfilled / Shipped':'تم الشحن','Return':'مرتجع','Partial Return':'مرتجع جزئي','All':'الكل',
+'Welcome! Get started in 4 steps':'أهلاً بيك! ابدأ في 4 خطوات','Tap a step to jump straight in.':'اضغط على أي خطوة وابدأ علطول.','Skip, I know my way':'تخطي، أنا عارف طريقي','Connect Shopify':'اربط Shopify','Link your store so orders flow in':'اربط متجرك عشان الأوردرات توصل','Connect WhatsApp':'اربط واتساب','Pair the number customers will hear from':'اربط الرقم اللي العملاء هيسمعوا منه','Set up messages':'جهّز الرسايل','Approve confirmation and follow-up templates':'وافق على تمبلتس التأكيد والمتابعة','Turn on Smart Offers':'شغّل العروض الذكية','Start tracked upsell after each order':'ابدأ عروض بيع إضافي متتبعة بعد كل أوردر',
+'Total Orders':'إجمالي الأوردرات','Moving forward':'ماشي للأمام','All order value':'قيمة كل الأوردرات','Every status':'كل الحالات','Requested Revenue':'الإيراد المطلوب','Pending and confirmed':'قيد الانتظار والمؤكد','Orders per day':'الأوردرات في اليوم','Last 14 days of the range':'آخر 14 يوم من الفترة','By status':'حسب الحالة','Latest orders':'آخر الأوردرات','View all':'عرض الكل','Top products':'أفضل المنتجات','Revenue':'الإيراد','Quantity':'الكمية',
+'Net sales':'صافي المبيعات','Net profit':'صافي الربح','After product cost and shipping':'بعد تكلفة المنتج والشحن','Orders in view':'الأوردرات المعروضة','Matching your filters':'مطابقة للفلاتر','Filters':'الفلاتر','Select visible':'تحديد المعروض','Send confirmation':'إرسال التأكيد','Search by order # or phone':'ابحث برقم الأوردر أو الموبايل',
+'Chats':'المحادثات','Unreplied':'بدون رد','Not contacted':'لم يتم التواصل','Unread':'غير مقروء','Follow-up':'متابعة','Unassigned':'غير مُسند','Order details':'تفاصيل الأوردر','Reply':'رد','Note':'ملاحظة','Template':'تمبلت','Type a message':'اكتب رسالة','Search name, phone or message':'ابحث بالاسم أو الموبايل أو الرسالة','Hello, when will my order arrive?':'مرحباً، الأوردر هيوصل إمتى؟','Thank you, got it!':'شكراً، تمام!',
+'SMS Wallet':'محفظة SMS','Credits available':'الرصيد المتاح','Recipients Now':'المستلمين الآن','Estimated Cost':'التكلفة المتوقعة','Prepaid SMS Wallet':'محفظة SMS مسبقة الدفع','Sending locked':'الإرسال مقفول','Recharge details':'تفاصيل الشحن','Upload proof':'ارفع الإيصال','Confirm recharge':'تأكيد الشحن','Create New Campaign':'إنشاء حملة جديدة','CAMPAIGN NAME':'اسم الحملة','MESSAGE TYPE':'نوع الرسالة','UPLOAD RECIPIENTS':'رفع المستلمين','VALID PHONES':'أرقام صالحة','ROWS SCANNED':'صفوف تم فحصها','Message content':'محتوى الرسالة','Variables:':'المتغيرات:','Send a test first':'ابعت تجربة الأول','Send test':'إرسال تجربة','Send campaign':'إرسال الحملة',
+'Upsell & Cross-sell':'بيع إضافي','Enabled':'مفعّل','Cancellation Recovery':'استرجاع الإلغاء','SMART OFFERS':'العروض الذكية','Results and tracking':'النتائج والتتبع','SEND TIME':'وقت الإرسال','DISCOUNT PERCENT':'نسبة الخصم','CUSTOMER GAP':'الفاصل بين العروض','STATUS':'الحالة','CAMPAIGN TRACKING':'تتبع الحملة','Messages sent':'الرسايل المرسلة','Link clicks':'ضغطات الروابط','Repeat purchases':'مشتريات متكررة','Click-through rate':'نسبة الضغط','Smart Offers':'العروض الذكية','Discount percent':'نسبة الخصم','Discount code':'كود الخصم','Message language':'لغة الرسالة','Arabic':'عربي','Product choice':'اختيار المنتج','Smart':'ذكي','Manual':'يدوي','Message template':'تمبلت الرسالة','Use':'استخدم','Save settings':'حفظ الإعدادات','Refresh preview':'تحديث المعاينة','PREVIEW':'معاينة','Open offer':'افتح العرض','Ready':'جاهز',
+'Free Marketing workspace':'مساحة التسويق','Prepaid SMS campaigns':'حملات SMS مسبقة الدفع','Open SMS':'افتح SMS','Refresh':'تحديث','META LIMIT':'حد ميتا','META USED 24H':'المستخدم آخر 24 ساعة','META REMAINING':'المتبقي','CONSENTED':'موافقين','CAMPAIGN AUDIENCE':'جمهور الحملة','Audience':'الجمهور','Personalize':'تخصيص','Review & send':'مراجعة وإرسال','Campaign name':'اسم الحملة','Approved Meta template':'تمبلت ميتا المعتمد','Next':'التالي','Recent campaigns':'آخر الحملات','No campaigns yet.':'لا توجد حملات بعد.',
+'CURRENT PRICE':'السعر الحالي','RENEWAL':'التجديد','CUSTOMERS':'العملاء','ORDERS':'الأوردرات','MESSAGES':'الرسايل','Usage this month':'الاستخدام هذا الشهر','Resets 14 Dec':'يتجدد 14 ديسمبر','Orders':'الأوردرات','Messages':'الرسايل','Team seats':'مقاعد الفريق','Choose your plan':'اختار باقتك','Monthly':'شهري','Basic':'الأساسية','Premium':'المميزة','Current':'الحالية','Unlimited customers':'عملاء بلا حد','5 team members':'5 أعضاء فريق','Every CRM feature is included':'كل مميزات الـ CRM متضمنة','Transfer details':'تفاصيل التحويل','PAYMENT METHODS':'طرق الدفع','Upload transfer proof':'ارفع إيصال التحويل',
+'Shopify · Connected and receiving data':'Shopify · متصل ويستقبل البيانات','Total customers':'إجمالي العملاء','Total revenue':'إجمالي الإيراد','Guarded customers':'عملاء تحت الحماية','New customers':'عملاء جدد','Latest message':'آخر رسالة','Latest activity':'آخر نشاط','Created at':'تاريخ الإنشاء','Name':'الاسم','Customer value':'قيمة العميل','All risk levels':'كل مستويات المخاطرة','Add customer':'إضافة عميل','Sync Shopify':'مزامنة Shopify','Enable Marketing Consent':'تفعيل موافقة التسويق','Export customers':'تصدير العملاء','Regular':'عادي','Opted in':'موافق','Opted out':'غير موافق','New customer':'عميل جديد','Open chat':'افتح الشات','Search by name or phone':'ابحث بالاسم أو الموبايل',
+'ABANDONED RECOVERY':'استرجاع العربات','Auto-send':'إرسال تلقائي','Save setup':'حفظ الإعداد','Disable auto-send':'إيقاف الإرسال التلقائي','Live preview':'معاينة مباشرة','UNRECOVERED':'غير مسترجع','RECOVERED':'مسترجع','READY NOW':'جاهز الآن','MESSAGES SENT':'رسايل مرسلة','Customer':'العميل','Phone':'الموبايل','Cart total':'إجمالي العربة','Recovered':'مسترجع','Send now':'ابعت الآن','Message sent':'تم الإرسال','Ready now':'جاهز الآن',
+'Live workspace':'مساحة العمل','Connections & Billing':'الاتصالات والفواتير','Accounts, providers and balances.':'الحسابات والمزودين والأرصدة.','WhatsApp Business':'واتساب بزنس','Number quality, templates and send limit':'جودة الرقم والتمبلتس وحد الإرسال','Shopify Store':'متجر Shopify','Connection, webhooks and store sync':'الاتصال والـ webhooks ومزامنة المتجر','Meta Connection':'اتصال ميتا','Delivery & Bosta':'التوصيل وبوسطة','Operations':'العمليات','Customer journey and order controls.':'رحلة العميل والتحكم في الأوردرات.','Workspace':'مساحة العمل','People, access and app preferences.':'الأشخاص والصلاحيات وتفضيلات التطبيق.','Order Confirmation':'تأكيد الأوردر','Order Tracking':'تتبع الأوردر','Notifications':'الإشعارات','What alerts you get and the daily summary':'التنبيهات اللي توصلك والملخص اليومي','Reviews':'التقييمات','Returns':'المرتجعات','Net Profit':'صافي الربح','Consent & Quiet Hours':'الموافقة وساعات الهدوء','Team & Permissions':'الفريق والصلاحيات','Invite agents, roles and seats':'ادعُ الموظفين والأدوار والمقاعد','App & Language':'التطبيق واللغة','AI Assistant':'المساعد الذكي','User & Workspace':'المستخدم ومساحة العمل','InstaPay':'إنستاباي','Close':'إغلاق','Save':'حفظ','Settings':'الإعدادات',
+'Single Search':'بحث واحد','Multi Search':'بحث متعدد','Export filtered':'تصدير المفلتر','Clear filters':'مسح الفلاتر','Product report':'تقرير المنتجات','Requested products':'المنتجات المطلوبة','Total requested quantity':'إجمالي الكمية المطلوبة','Products value':'قيمة المنتجات','Product':'المنتج','Unit price':'سعر الوحدة','Value':'القيمة','Search products by name...':'ابحث عن منتج بالاسم...','Order number from':'رقم الأوردر من','Order number to':'رقم الأوردر إلى','No alphabetical sort':'بدون ترتيب أبجدي',
+'Number':'الرقم','Connection':'الاتصال','Quality rating':'تقييم الجودة','Daily limit':'الحد اليومي','Templates':'التمبلتس','Approved':'معتمد','In review':'قيد المراجعة','Rejected':'مرفوض','Invite':'دعوة','New order':'أوردر جديد','Abandoned cart':'عربة متروكة','Unanswered chat':'محادثة بدون رد','Daily summary':'ملخص يومي','Respect STOP replies':'احترام ردود STOP','Quiet hours':'ساعات الهدوء','Activity log':'سجل النشاط','Order comments':'تعليقات الأوردر','Payment summary':'ملخص الدفع','Items':'المنتجات','Shipping address':'عنوان الشحن','Billing address':'عنوان الفواتير','Tags':'التاجز','Subtotal':'الإجمالي الفرعي','Shipping':'الشحن','Tax':'الضريبة','Total':'الإجمالي','Discount':'الخصم','Hide Details':'إخفاء التفاصيل','Add Comment':'إضافة تعليق','Edit Return Reason':'تعديل سبب الإرجاع','No comments yet.':'لا توجد تعليقات بعد.','No orders match these filters.':'لا توجد أوردرات مطابقة.','No chats found':'لا توجد محادثات','No products match.':'لا توجد منتجات مطابقة.','Select a chat':'اختر محادثة','Search in':'بحث في','Source':'المصدر','Sort':'الترتيب','Newest first':'الأحدث أولاً','Skip for now':'تخطي دلوقتي',
+};
+const MON: Record<string, string> = { Jan: 'يناير', Feb: 'فبراير', Mar: 'مارس', Apr: 'أبريل', May: 'مايو', Jun: 'يونيو', Jul: 'يوليو', Aug: 'أغسطس', Sep: 'سبتمبر', Oct: 'أكتوبر', Nov: 'نوفمبر', Dec: 'ديسمبر' };
+const P: [RegExp, (m: RegExpMatchArray) => string][] = [
+ [/^(\d+) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/, m => `${m[1]} ${MON[m[2]]}`],
+ [/^(\d+) November$/, m => `${m[1]} نوفمبر`],
+ [/^of (\d+) orders$/, m => `من ${m[1]} أوردر`],
+ [/^(\d+) fulfilled orders$/, m => `${m[1]} أوردر مشحون`],
+ [/^Trial: (\d+) days left$/, m => `التجربة: باقي ${m[1]} أيام`],
+ [/^(\d+) of (\d+) orders$/, m => `${m[1]} من ${m[2]} أوردر`],
+ [/^(\d+) chats$/, m => `${m[1]} محادثة`],
+ [/^(\d+) unread$/, m => `${m[1]} غير مقروء`],
+ [/^(\d+) (orders|messages)$/, m => `${m[1]} ${m[2] === 'orders' ? 'أوردر' : 'رسالة'}`],
+ [/^(\d+) (min|h|d) ago$/, m => `من ${m[1]} ${m[2] === 'min' ? 'دقيقة' : m[2] === 'h' ? 'ساعة' : 'يوم'}`],
+ [/^Load more orders \((\d+)\)$/, m => `تحميل المزيد (${m[1]})`],
+ [/^Order #(\d+)$/, m => `أوردر #${m[1]}`],
+ [/^Select (Basic|Pro|Premium)$/, m => `اختر ${m[1]}`],
+];
+const orig = new WeakMap<Node, string>();
+function tx(s: string): string | null {
+  const t = s.trim(); if (!t) return null;
+  const hit = D[t] ?? (() => { for (const [r, f] of P) { const m = t.match(r); if (m) return f(m); } return undefined; })();
+  if (!hit) return null;
+  return s.replace(t, hit);
+}
+function walk(root: Node, ar: boolean) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n: Node | null;
+  const list: Node[] = []; while ((n = w.nextNode())) list.push(n);
+  list.forEach(node => {
+    const cur = node.textContent || '';
+    if (ar) { const o = orig.get(node); if (o !== undefined && cur === tx(o)) return; const r = tx(cur); if (r !== null) { orig.set(node, cur); node.textContent = r; } }
+    else { const o = orig.get(node); if (o !== undefined) { node.textContent = o; orig.delete(node); } }
+  });
+  if (root instanceof Element) root.querySelectorAll('input[placeholder]').forEach(el => {
+    const i = el as HTMLInputElement; const ph = i.placeholder;
+    if (ar) { const r = D[ph]; if (r) { i.dataset.enph = ph; i.placeholder = r; } } else if (i.dataset.enph) { i.placeholder = i.dataset.enph; delete i.dataset.enph; }
+  });
+}
+export function startArabic(ar: boolean) {
+  let busy = false;
+  const run = () => { if (busy) return; busy = true; try { walk(document.body, ar); } finally { busy = false; } };
+  run();
+  const mo = new MutationObserver(() => { if (ar) run(); });
+  mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+  return () => { mo.disconnect(); if (!ar) return; };
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './style.css';
 import { DashboardPage, OrdersPage, ChatPage, SalesPage as SalesNew, CustomersPage as CustNew, CartsPage as CartsNew, MarketingPage, SmsPage as SmsNew, OffersPage, RetentionPage as RetNew, LoyaltyPage as LoyNew, PlanPage, SettingsPage as SetNew, ProductsPage } from './pages';
 import { PublicSite } from './public';
+import { startArabic } from './ar';
 import { ORDERS as DORD } from './demoData';
 import { Lang, makeT } from './i18n';
 import {
@@ -77,6 +78,7 @@ export default function App() {
 
   const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact'];
   const [connected, setConnected] = useState(initial !== 'home' && !PUB.includes(initial) && initial !== 'login' && initial !== 'connect');
+  useEffect(() => startArabic(lang === 'ar'), [lang]);
   useEffect(() => { const names: Record<string, string> = { home: 'Home', about: 'About', features: 'Features', pricing: 'Pricing', projects: 'Projects', contact: 'Contact', login: 'Sign in', connect: 'Connect your store', dashboard: 'Dashboard', overview: 'Dashboard', orders: 'Orders', chats: 'Chat', sales: 'Shopify Sales', customers: 'Customers', products: 'Products report', carts: 'Abandoned Carts', templates: 'Marketing', sms: 'SMS', automations: 'Smart Offers', retention: 'Retention', loyalty: 'Loyalty & Rewards', billing: 'Plan & Billing', settings: 'Settings' }; document.title = (names[page] || 'Page not found') + ' | 4Pixels'; }, [page]);
   const go = (p: string) => {
     if (p === 'dashboard' && !connected) p = 'connect';
