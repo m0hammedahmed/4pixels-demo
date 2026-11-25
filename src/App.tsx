@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './style.css';
 import { DashboardPage, OrdersPage, ChatPage, SalesPage as SalesNew, CustomersPage as CustNew, CartsPage as CartsNew, MarketingPage, SmsPage as SmsNew, OffersPage, RetentionPage as RetNew, LoyaltyPage as LoyNew, PlanPage, SettingsPage as SetNew } from './pages';
 import { PublicSite } from './public';
+import { ORDERS as DORD } from './demoData';
 import { Lang, makeT } from './i18n';
 import {
   ORDERS, Order, CHATS, Conversation, AUTOMATIONS, TEMPLATES, SHIPMENTS,
@@ -68,8 +69,8 @@ export default function App() {
   const initial = ALIAS[initial0] || initial0;
   const [page, setPage] = useState<string>(initial === 'landing' ? 'home' : initial);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const showToast = (m: string) => { setToast(m); window.setTimeout(() => setToast(null), 2200); };
+  const [toast, setToast] = useState<{ m: string; undo?: () => void } | null>(null);
+  const showToast = (m: string, undo?: () => void) => { setToast({ m, undo }); window.setTimeout(() => setToast(null), undo ? 5000 : 2200); };
 
   const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -101,7 +102,7 @@ export default function App() {
           showToast={showToast}
         />
       )}
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast">{toast.m}{toast.undo && <button className="toast-undo" onClick={() => { toast.undo!(); setToast(null); }}>Undo</button>}</div>}
     </div>
   );
 }
@@ -201,8 +202,11 @@ function Shell(props: {
   menuOpen: boolean; setMenuOpen: (b: boolean) => void;
   notifs: typeof INITIAL_NOTIFS; setNotifs: (n: typeof INITIAL_NOTIFS) => void;
   notifOpen: boolean; setNotifOpen: (b: boolean) => void;
-  showToast: (m: string) => void;
+  showToast: (m: string, undo?: () => void) => void;
 }) {
+  const [pal, setPal] = useState(false);
+  const [pq, setPq] = useState('');
+  useEffect(() => { const h = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPal(p => !p); setPq(''); } else if (e.key === 'Escape') setPal(false); }; window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h); }, []);
   const { t, lang, setLang, page, go, menuOpen, setMenuOpen, notifs, setNotifs, notifOpen, setNotifOpen, showToast } = props;
   const GROUPS: { g: string; items: { k: string; page: string; icon: string; badge?: string }[] }[] = [
     { g: 'workspace', items: [
@@ -255,9 +259,9 @@ function Shell(props: {
           <button className="icon-btn menu-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="menu"><I n="menu" /></button>
           <div className="searchbox">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--muted-2)', flex: 'none' }}><path d="M10 2a8 8 0 105.3 14l5.3 5.4 1.5-1.5-5.4-5.3A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/></svg>
-            <input placeholder={t('top.search')} />
+            <input readOnly placeholder={t('top.search')} onClick={() => { setPal(true); setPq(''); }} onFocus={() => { setPal(true); setPq(''); }} /><kbd className="kbd">Ctrl K</kbd>
           </div>
-          <span className="trial-pill">{t('top.trial')}</span>
+          <button className="trial-pill trial-btn" onClick={() => go('billing')}>{t('top.trial')}<span className="tbar"><i style={{ width: '20%' }} /></span></button>
           <div className="top-actions">
             <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}>{t('common.language')}</button>
             <button className="icon-btn" onClick={() => setNotifOpen(!notifOpen)} aria-label="notifications">
@@ -268,6 +272,26 @@ function Shell(props: {
           </div>
         </div>
 
+        {pal && (() => {
+          const pages = GROUPS.flatMap(g => g.items).map(it => ({ label: t(`nav.${it.k}`), go: it.page, kind: 'Page' }));
+          const cust = CUSTOMERS_DEMO.map(c => ({ label: `${c.n} · ${c.p}`, go: 'customers', kind: 'Customer' }));
+          const ords = DORD.slice(0, 40).map(o => ({ label: `#${o.id} · ${o.name}`, go: 'orders', kind: 'Order' }));
+          const all = [...pages, ...cust, ...ords];
+          const ql = pq.toLowerCase();
+          const res = (ql ? all.filter(x => x.label.toLowerCase().includes(ql)) : pages).slice(0, 8);
+          return (
+            <div className="pal-back" onClick={() => setPal(false)}>
+              <div className="pal" onClick={e => e.stopPropagation()}>
+                <input autoFocus className="pal-in" placeholder="Search pages, orders, customers..." value={pq} onChange={e => setPq(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && res[0]) { go(res[0].go); setPal(false); } }} />
+                <div className="pal-list">
+                  {res.map((r, i) => <button key={i} className="pal-row" onClick={() => { go(r.go); setPal(false); }}><span>{r.label}</span><small>{r.kind}</small></button>)}
+                  {res.length === 0 && <div className="muted small" style={{ padding: 14 }}>No results</div>}
+                </div>
+                <div className="pal-foot muted small">Enter to open · Esc to close</div>
+              </div>
+            </div>
+          );
+        })()}
         {notifOpen && (
           <div className="notif-pop">
             <div className="notif-head">
@@ -923,7 +947,8 @@ function ConnectPage({ lang, setLang, go, onDone }: { lang: Lang; setLang: (l: L
           <div className="field"><label>{ar ? 'دومين المتجر' : 'Store domain'}</label><input value={domain} onChange={e => setDomain(e.target.value)} disabled={phase !== 'idle'} /></div>
           {phase === 'idle' && <button className="btn btn-primary btn-block" onClick={start}><I n="shopify" size={16} />{ar ? 'اربط Shopify' : 'Connect Shopify'}</button>}
           {phase === 'auth' && <div className="sync-box"><div className="spin" />{ar ? 'بنفتح صلاحيات Shopify...' : 'Authorizing with Shopify...'}</div>}
-          {phase === 'sync' && <div className="sync-box col"><div>{ar ? 'بنسحب الأوردرات والعملاء...' : 'Syncing orders and customers...'}</div><div className="bar-track"><div style={{ width: `${pct}%`, height: '100%', background: 'var(--accent)', borderRadius: 100, transition: 'width .2s' }} /></div></div>}
+          {phase === 'sync' && <div className="sync-box col"><div>{ar ? 'بنسحب الأوردرات والعملاء...' : 'Syncing orders and customers...'} <b>{Math.round(pct * 3.12)} {ar ? 'أوردر' : 'orders'} · {Math.round(pct * 1.48)} {ar ? 'عميل' : 'customers'}</b></div><div className="bar-track"><div style={{ width: `${pct}%`, height: '100%', background: 'var(--accent)', borderRadius: 100, transition: 'width .2s' }} /></div></div>}
+          <p className="trust"><I n="check" size={13} />{ar ? 'قراءة فقط على أوردراتك. مبنبعتش أي رسالة من غير موافقتك.' : 'Read-only access to your orders. We never message customers without your approval.'}</p>
           <button className="link-btn" onClick={() => setStep('wa')}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>
         </>) : (<>
           <p className="eyebrow">{ar ? 'الخطوة 3 من 3' : 'STEP 3 OF 3'}</p>
@@ -947,6 +972,7 @@ function ConnectPage({ lang, setLang, go, onDone }: { lang: Lang; setLang: (l: L
             <div className="sync-box" style={{ color: '#047857' }}><I n="check" size={16} />{ar ? 'الرقم' : 'Number'} {num} {ar ? 'اتربط بنجاح' : 'is connected'}</div>
             <button className="btn btn-primary btn-block" onClick={onDone}>{ar ? 'افتح لوحة التحكم' : 'Go to dashboard'}</button>
           </>)}
+          <p className="trust"><I n="check" size={13} />{ar ? 'رسايلك بتفضل على رقمك، ومحادثاتك الحالية مش بتتمسح.' : 'Your chats stay on your number. Nothing is deleted or sent without your approval.'}</p>
           {wph !== 'ok' && <button className="link-btn" onClick={onDone}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>}
         </>)}
       </div>

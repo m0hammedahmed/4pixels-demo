@@ -3,7 +3,7 @@ import { I } from './App';
 import { ORDERS, DOrder, OStatus, fmtMoney, fmtDate, rangeFor, RANGE_KEYS, DEMO_NOW } from './demoData';
 import type { Lang } from './i18n';
 
-type P = { lang: Lang; showToast: (m: string) => void; go: (p: string) => void };
+type P = { lang: Lang; showToast: (m: string, undo?: () => void) => void; go: (p: string) => void };
 const tr = (lang: Lang, en: string, ar?: string) => (lang === 'ar' && ar ? ar : en);
 
 function Head({ right }: { eyebrow?: string; title?: string; sub?: string; right?: React.ReactNode }) {
@@ -210,11 +210,11 @@ export function OrdersPage({ lang, showToast, go }: P) {
                     <div className="d-sec"><h4>Shipping address</h4><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt<br />{o.phone}<br />{o.email}</div></div>
                     <div className="d-sec"><h4>Billing address</h4><b>{o.name}</b><div className="muted small">{o.address}, {o.city}, Egypt</div></div>
                   </div>
-                  <div className="d-sec"><h4>Automation timeline</h4>{o.timeline.slice().reverse().map(t => <div className="tl" key={t.t}><i />{t.t}<small>{fmtDate(t.at)}</small></div>)}</div>
+                  <div className="d-sec"><h4>Activity log</h4>{o.timeline.slice().reverse().map((t, ix) => <div className="tl" key={t.t}><i />{t.t}<small>{['System', 'Mona', 'System', 'Kareem'][ix % 4]} · {fmtDate(t.at)}</small></div>)}</div>
                   <div className="d-sec"><h4>Tags</h4><div className="chip-row">{o.tags.map(t => <span className="chip grey" key={t}>{t}</span>)}</div></div>
                   <div className="d-sec"><h4>Order comments</h4>
                     {cm.length === 0 && <div className="muted small">No comments yet.</div>}{cm.map((c, i) => <div className="comment" key={i}>{c}</div>)}
-                    <div className="tool-row"><input className="inp grow" placeholder="Write an internal comment" value={draft} onChange={e => setDraft(e.target.value)} /><button className="btn btn-primary btn-sm" onClick={() => { if (draft.trim()) { setComments({ ...comments, [o.id]: [...(comments[o.id] || []), draft.trim()] }); setDraft(''); } }}>Add Comment</button></div>
+                    <div className="tool-row"><input className="inp grow" placeholder="Write an internal comment" value={draft} onChange={e => setDraft(e.target.value)} /><button className="btn btn-primary btn-sm" onClick={() => { if (draft.trim()) { const prev = comments; setComments({ ...comments, [o.id]: [...(comments[o.id] || []), draft.trim()] }); setDraft(''); showToast('Comment added', () => setComments(prev)); } }}>Add Comment</button></div>
                   </div>
                 </div>
               )}
@@ -230,7 +230,7 @@ export function OrdersPage({ lang, showToast, go }: P) {
             <h3 className="h3">Return reason · #{retFor}</h3>
             <select className="inp" defaultValue="Customer changed mind">{['Customer changed mind', 'Wrong size', 'Damaged item', 'Late delivery', 'Not reachable'].map(x => <option key={x}>{x}</option>)}</select>
             <textarea className="inp" rows={3} placeholder="Notes" style={{ marginTop: 10 }} />
-            <div className="btn-row" style={{ marginTop: 12 }}><button className="btn btn-ghost" onClick={() => setRetFor(null)}>Cancel</button><button className="btn btn-primary" onClick={() => { setRetFor(null); showToast('Return reason saved'); }}>Save</button></div>
+            <div className="btn-row" style={{ marginTop: 12 }}><button className="btn btn-ghost" onClick={() => setRetFor(null)}>Cancel</button><button className="btn btn-primary" onClick={() => { setRetFor(null); showToast('Return reason saved', () => showToast('Change undone')); }}>Save</button></div>
           </div>
         </div>
       )}
@@ -248,6 +248,9 @@ export function ChatPage({ lang, showToast }: P) {
   const [sent, setSent] = useState<Record<number, string[]>>({});
   const [read, setRead] = useState<number[]>([]);
   const [more, setMore] = useState(false);
+  const [noteMode, setNoteMode] = useState(false);
+  const [notes, setNotes] = useState<Record<number, string[]>>({});
+  const [assignee, setAssignee] = useState<Record<number, string>>({});
   const chats = ORDERS.slice(0, 24);
   const unread = (o: DOrder) => (read.includes(o.id) ? 0 : o.unread);
   let list = chats.filter(o => (chan === 'All' || chan === 'WhatsApp') && (`${o.name} ${o.phone} ${o.lastMsg} ${o.id}`.toLowerCase().includes(q.toLowerCase())));
@@ -255,7 +258,7 @@ export function ChatPage({ lang, showToast }: P) {
   if (filter === 'Unreplied') list = list.filter(o => o.id % 4 === 0);
   if (filter === 'Follow-up') list = list.filter(o => o.id % 9 === 0);
   const cur = chats.find(o => o.id === sel) || null;
-  const send = () => { if (cur && draft.trim()) { setSent({ ...sent, [cur.id]: [...(sent[cur.id] || []), draft.trim()] }); setDraft(''); } };
+  const send = () => { if (cur && draft.trim() && noteMode) { setNotes({ ...notes, [cur.id]: [...(notes[cur.id] || []), draft.trim()] }); setDraft(''); } else if (cur && draft.trim()) { setSent({ ...sent, [cur.id]: [...(sent[cur.id] || []), draft.trim()] }); setDraft(''); } };
   return (
     <div className="chat-page">
       <div className={`chat-wrap${cur ? ' has-sel' : ''}`}>
@@ -288,6 +291,7 @@ export function ChatPage({ lang, showToast }: P) {
                 <button className="icon-btn back-btn" onClick={() => setSel(null)}><I n="back" size={16} /></button>
                 <div className="av">{cur.name[0]}</div>
                 <div className="grow"><b>{cur.name}</b><div className="muted small">{cur.phone}</div></div>
+                <select className="inp assign" value={assignee[cur.id] || 'Unassigned'} onChange={e => { setAssignee({ ...assignee, [cur.id]: e.target.value }); showToast(`Assigned to ${e.target.value}`); }}>{['Unassigned', 'Mona', 'Kareem', 'Mohammed'].map(x => <option key={x}>{x}</option>)}</select>
                 <button className="btn btn-ghost btn-sm" onClick={() => setMore(!more)}>{more ? 'Hide order' : 'Order details'}</button>
               </div>
               <div className="order-chip-row">
@@ -310,8 +314,9 @@ export function ChatPage({ lang, showToast }: P) {
                 <div className="bubble out">Hello {cur.name.split(' ')[0]}, your order #{cur.id} was created. Reply YES to confirm.<small>{fmtDate(cur.date + 8000)}</small></div>
                 <div className="bubble in">{cur.lastMsg}<small>{fmtDate(cur.date + 600000)}</small></div>
                 {(sent[cur.id] || []).map((m, i) => <div className="bubble out" key={i}>{m}<small>now ✓✓</small></div>)}
+                {(notes[cur.id] || []).map((m, i) => <div className="bubble note" key={'n' + i}><b>Internal note</b> {m}<small>only your team sees this</small></div>)}
               </div>
-              <div className="composer"><input className="inp grow" placeholder="Type a message" value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} /><button className="btn btn-ghost btn-sm" onClick={() => showToast('Template picker (demo)')}>Template</button><button className="btn btn-primary send-btn" onClick={send}><I n="send" size={16} /></button></div>
+              <div className="composer"><div className="seg mode"><button className={!noteMode ? 'on' : ''} onClick={() => setNoteMode(false)}>Reply</button><button className={noteMode ? 'on' : ''} onClick={() => setNoteMode(true)}>Note</button></div><input className="inp grow" placeholder={noteMode ? 'Write an internal note (customer cannot see it)' : 'Type a message'} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} />{!noteMode && <button className="btn btn-ghost btn-sm" onClick={() => showToast('Template picker (demo)')}>Template</button>}<button className="btn btn-primary send-btn" onClick={send}><I n="send" size={16} /></button></div>
             </>
           )}
         </div>
@@ -557,11 +562,11 @@ export function PlanPage({ lang, showToast }: P) {
 /* ---------------- Settings ---------------- */
 export function SettingsPage({ lang, showToast }: P) {
   const tiles: [string, string, string, string][] = [
-    ['conn', 'WhatsApp Business', 'Connect number, credits and partner billing', 'whatsapp'], ['conn', 'Shopify Store', 'Connection, webhooks and store sync', 'shopify'], ['conn', 'Meta Connection', 'Callbacks, verification and Embedded Signup', 'auto'],
+    ['conn', 'WhatsApp Business', 'Number quality, templates and send limit', 'whatsapp'], ['conn', 'Shopify Store', 'Connection, webhooks and store sync', 'shopify'], ['conn', 'Meta Connection', 'Callbacks, verification and Embedded Signup', 'auto'],
     ['conn', 'Delivery & Bosta', 'Secure API key, shipment checks and delivery settings', 'delivery'], ['conn', 'InstaPay', 'Payment link and customer instructions', 'profit'],
-    ['ops', 'Order Confirmation', 'Provider, template and confirmation flow', 'orders'], ['ops', 'Order Tracking', 'Fulfilled orders, shipping delays, overdue orders and Excel exports', 'delivery'], ['ops', 'Notifications', 'Push registration and linked devices', 'bell'],
-    ['ops', 'Reviews', 'Post-delivery review requests', 'loyalty'], ['ops', 'Returns', 'Reasons and return rules', 'back'], ['ops', 'Net Profit', 'Product cost and profit rules', 'profit'],
-    ['ws', 'User & Workspace', 'Workspace-level CRM preferences', 'settings'], ['ws', 'Team & Permissions', 'Roles, seats and access control', 'inbox'], ['ws', 'App & Language', 'Language, install and display preferences', 'settings'], ['ws', 'AI Assistant', 'Model, reply policy and escalation', 'auto'],
+    ['ops', 'Order Confirmation', 'Provider, template and confirmation flow', 'orders'], ['ops', 'Order Tracking', 'Fulfilled orders, shipping delays, overdue orders and Excel exports', 'delivery'], ['ops', 'Notifications', 'What alerts you get and the daily summary', 'bell'],
+    ['ops', 'Reviews', 'Post-delivery review requests', 'loyalty'], ['ops', 'Returns', 'Reasons and return rules', 'back'], ['ops', 'Net Profit', 'Product cost and profit rules', 'profit'], ['ops', 'Consent & Quiet Hours', 'Opt-outs, STOP replies and no-send hours', 'back'],
+    ['ws', 'User & Workspace', 'Workspace-level CRM preferences', 'settings'], ['ws', 'Team & Permissions', 'Invite agents, roles and seats', 'inbox'], ['ws', 'App & Language', 'Language, install and display preferences', 'settings'], ['ws', 'AI Assistant', 'Model, reply policy and escalation', 'auto'],
   ];
   const [open, setOpen] = useState<string | null>(null);
   const grp = [['conn', 'Connections & Billing', 'Accounts, providers and balances.'], ['ops', 'Operations', 'Customer journey and order controls.'], ['ws', 'Workspace', 'People, access and app preferences.']];
@@ -570,8 +575,41 @@ export function SettingsPage({ lang, showToast }: P) {
       <Head eyebrow="4PIXELS CRM" title="Settings" sub="Connections, billing and workspace controls — organized without the clutter." right={<span className="chip green">Live workspace</span>} />
       <div className="set-cols">{grp.map(([g, t, d]) => <div className="card card-pad" key={g}><h3 className="h3">{t}</h3><p className="muted small">{d}</p>{tiles.filter(x => x[0] === g).map(x => <button key={x[1]} className="tile" onClick={() => setOpen(x[1])}><span className="tile-ic"><I n={x[3]} size={18} /></span><span className="grow"><b>{x[1]}</b><small>{x[2]}</small></span><I n="back" size={12} /></button>)}</div>)}</div>
       {open && <div className="drawer-back" onClick={() => setOpen(null)}><div className="modal" onClick={e => e.stopPropagation()}><h3 className="h3">{open}</h3>
-        {open === 'Shopify Store' ? <><div className="field"><label>Store domain</label><input value="demo-store.myshopify.com" readOnly /></div><div className="row-between"><span>Connection</span><span className="chip green">Connected</span></div><div className="row-between"><span>Webhooks</span><span className="chip green">Receiving</span></div><button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => showToast('Store sync started')}>Sync store</button></> : open === 'Delivery & Bosta' ? <><div className="field"><label>Bosta API key</label><input type="password" value="demo-key-hidden" readOnly /></div><div className="row-between"><span>Shipment checks</span><span className="chip green">On</span></div></> : <p className="muted">Demo settings panel for {open}.</p>}
+        {open === 'Shopify Store' ? <><div className="field"><label>Store domain</label><input value="demo-store.myshopify.com" readOnly /></div><div className="row-between"><span>Connection</span><span className="chip green">Connected</span></div><div className="row-between"><span>Webhooks</span><span className="chip green">Receiving</span></div><button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => showToast('Store sync started')}>Sync store</button></> : open === 'Delivery & Bosta' ? <><div className="field"><label>Bosta API key</label><input type="password" value="demo-key-hidden" readOnly /></div><div className="row-between"><span>Shipment checks</span><span className="chip green">On</span></div></> : <SettingsPanel name={open} />}
         <div className="btn-row" style={{ marginTop: 14 }}><button className="btn btn-ghost" onClick={() => setOpen(null)}>Close</button><button className="btn btn-primary" onClick={() => { setOpen(null); showToast('Saved'); }}>Save</button></div></div></div>}
     </div>
   );
+}
+
+function Tog({ label, sub, on: init = true }: { label: string; sub?: string; on?: boolean }) {
+  const [on, setOn] = useState(init);
+  return <div className="row-between tog-row"><span><b>{label}</b>{sub && <small className="muted">{sub}</small>}</span><button className={`tog${on ? ' on' : ''}`} onClick={() => setOn(!on)} aria-pressed={on}><i /></button></div>;
+}
+function SettingsPanel({ name }: { name: string }) {
+  if (name === 'WhatsApp Business') {
+    const tpl: [string, string, string][] = [['Order confirmation', 'Approved', 'green'], ['Shipping update', 'Approved', 'green'], ['Abandoned cart reminder', 'In review', 'gold'], ['Win-back offer', 'Rejected', 'red']];
+    return <>
+      <div className="row-between"><span>Number</span><b>+20 100 555 0199</b></div>
+      <div className="row-between"><span>Connection</span><span className="chip green">Coexistence</span></div>
+      <div className="row-between"><span>Quality rating</span><span className="chip green">High</span></div>
+      <div className="row-between"><span>Daily limit</span><b>1,000 customers / 24h</b></div>
+      <h4 style={{ margin: '14px 0 6px' }}>Templates</h4>
+      {tpl.map(([n, st, c]) => <div className="row-between" key={n}><span>{n}</span><span className={`chip ${c}`}>{st}</span></div>)}
+      <p className="muted small" style={{ marginTop: 8 }}>Win-back offer was rejected: a variable sits at the start of the message body. Edit it and resubmit.</p>
+    </>;
+  }
+  if (name === 'Notifications') return <>
+    <Tog label="New order" sub="Instant alert" /><Tog label="Abandoned cart" sub="When a cart is left for 1 hour" /><Tog label="Unanswered chat" sub="If a customer waits more than 10 minutes" /><Tog label="Daily summary" sub="Orders and sales every morning at 9:00" on={false} />
+  </>;
+  if (name === 'Team & Permissions') return <>
+    {[['Mohammed Ahmed', 'Owner'], ['Mona', 'Agent'], ['Kareem', 'Agent']].map(([n, r]) => <div className="row-between" key={n}><span>{n}</span><select className="inp mini" defaultValue={r} disabled={r === 'Owner'}>{['Owner', 'Admin', 'Agent'].map(x => <option key={x}>{x}</option>)}</select></div>)}
+    <p className="muted small">3 of 5 seats used</p>
+    <div className="tool-row"><input className="inp grow" placeholder="Invite by email" /><button className="btn btn-primary btn-sm">Invite</button></div>
+  </>;
+  if (name === 'Consent & Quiet Hours') return <>
+    <Tog label="Respect STOP replies" sub="Customers who reply STOP are never messaged again" /><Tog label="Only message opted-in customers" sub="Marketing goes to customers who agreed" />
+    <Tog label="Quiet hours" sub="No marketing messages during these hours" />
+    <div className="tool-row"><label className="muted small">From</label><input className="inp" type="time" defaultValue="22:00" /><label className="muted small">To</label><input className="inp" type="time" defaultValue="09:00" /></div>
+  </>;
+  return <p className="muted">Demo settings panel for {name}.</p>;
 }
