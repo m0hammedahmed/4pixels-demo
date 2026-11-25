@@ -15,6 +15,7 @@ export const STR: Record<string, { en: string; ar: string }> = {
   'nav.chat': { en: 'Chat', ar: 'المحادثات' },
   'nav.dashboard': { en: 'Dashboard', ar: 'لوحة التحكم' },
   'nav.sales': { en: 'Shopify Sales', ar: 'مبيعات Shopify' },
+  'nav.products': { en: 'Products report', ar: 'تقرير المنتجات' },
   'nav.customers': { en: 'Customers', ar: 'العملاء' },
   'nav.carts': { en: 'Abandoned Carts', ar: 'السلات المتروكة' },
   'nav.marketing': { en: 'Marketing', ar: 'التسويق' },

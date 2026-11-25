@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './style.css';
-import { DashboardPage, OrdersPage, ChatPage, SalesPage as SalesNew, CustomersPage as CustNew, CartsPage as CartsNew, MarketingPage, SmsPage as SmsNew, OffersPage, RetentionPage as RetNew, LoyaltyPage as LoyNew, PlanPage, SettingsPage as SetNew } from './pages';
+import { DashboardPage, OrdersPage, ChatPage, SalesPage as SalesNew, CustomersPage as CustNew, CartsPage as CartsNew, MarketingPage, SmsPage as SmsNew, OffersPage, RetentionPage as RetNew, LoyaltyPage as LoyNew, PlanPage, SettingsPage as SetNew, ProductsPage } from './pages';
 import { PublicSite } from './public';
 import { ORDERS as DORD } from './demoData';
 import { Lang, makeT } from './i18n';
@@ -77,7 +77,7 @@ export default function App() {
 
   const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact'];
   const [connected, setConnected] = useState(initial !== 'home' && !PUB.includes(initial) && initial !== 'login' && initial !== 'connect');
-  useEffect(() => { const names: Record<string, string> = { home: 'Home', about: 'About', features: 'Features', pricing: 'Pricing', projects: 'Projects', contact: 'Contact', login: 'Sign in', connect: 'Connect your store', dashboard: 'Dashboard', overview: 'Dashboard', orders: 'Orders', chats: 'Chat', sales: 'Shopify Sales', customers: 'Customers', carts: 'Abandoned Carts', templates: 'Marketing', sms: 'SMS', automations: 'Smart Offers', retention: 'Retention', loyalty: 'Loyalty & Rewards', billing: 'Plan & Billing', settings: 'Settings' }; document.title = (names[page] || 'Page not found') + ' | 4Pixels'; }, [page]);
+  useEffect(() => { const names: Record<string, string> = { home: 'Home', about: 'About', features: 'Features', pricing: 'Pricing', projects: 'Projects', contact: 'Contact', login: 'Sign in', connect: 'Connect your store', dashboard: 'Dashboard', overview: 'Dashboard', orders: 'Orders', chats: 'Chat', sales: 'Shopify Sales', customers: 'Customers', products: 'Products report', carts: 'Abandoned Carts', templates: 'Marketing', sms: 'SMS', automations: 'Smart Offers', retention: 'Retention', loyalty: 'Loyalty & Rewards', billing: 'Plan & Billing', settings: 'Settings' }; document.title = (names[page] || 'Page not found') + ' | 4Pixels'; }, [page]);
   const go = (p: string) => {
     if (p === 'dashboard' && !connected) p = 'connect';
     if (p === 'landing') p = 'home';
@@ -216,6 +216,7 @@ function Shell(props: {
       { k: 'sales', page: 'sales', icon: 'shopify', badge: 'EXACT' },
       { k: 'orders', page: 'orders', icon: 'orders' },
       { k: 'customers', page: 'customers', icon: 'inbox' },
+      { k: 'products', page: 'products', icon: 'cart' },
     ] },
     { g: 'growth', items: [
       { k: 'carts', page: 'carts', icon: 'cart' },
@@ -233,7 +234,7 @@ function Shell(props: {
   const pageKey = page === 'dashboard' ? 'overview' : page;
   const [loading, setLoading] = useState(true);
   useEffect(() => { setLoading(true); const id = window.setTimeout(() => setLoading(false), 260); return () => window.clearTimeout(id); }, [pageKey]);
-  const KNOWN = ['overview', 'orders', 'chats', 'sales', 'customers', 'carts', 'templates', 'sms', 'automations', 'retention', 'loyalty', 'billing', 'settings', 'delivery'];
+  const KNOWN = ['overview', 'orders', 'chats', 'sales', 'customers', 'carts', 'templates', 'sms', 'automations', 'retention', 'loyalty', 'billing', 'settings', 'delivery', 'products'];
 
   return (
     <div className="shell">
@@ -323,6 +324,7 @@ function Shell(props: {
           {!loading && pageKey === 'orders' && <OrdersPage lang={lang} showToast={showToast} go={go} />}
           {!loading && pageKey === 'chats' && <ChatPage lang={lang} showToast={showToast} go={go} />}
           {!loading && pageKey === 'sales' && <SalesNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'products' && <ProductsPage lang={lang} showToast={showToast} go={go} />}
           {!loading && pageKey === 'customers' && <CustNew lang={lang} showToast={showToast} go={go} />}
           {!loading && pageKey === 'carts' && <CartsNew lang={lang} showToast={showToast} go={go} />}
           {!loading && pageKey === 'templates' && <MarketingPage lang={lang} showToast={showToast} go={go} />}

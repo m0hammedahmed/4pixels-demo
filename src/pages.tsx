@@ -614,3 +614,48 @@ function SettingsPanel({ name }: { name: string }) {
   </>;
   return <p className="muted">Demo settings panel for {name}.</p>;
 }
+
+/* ---------------- Products report ---------------- */
+const PRODUCTS: [string, number, number, number][] = [
+  ['Classic cotton tee - Black', 142, 131, 249], ['Knit cardigan - Beige', 96, 90, 640], ['Denim jacket - Washed blue', 88, 84, 650], ['Oversized hoodie - Grey', 120, 112, 519],
+  ['White sneakers - Size 42', 64, 61, 1250], ['Linen shirt - Sand', 77, 70, 420], ['Canvas tote bag', 58, 52, 180], ['Leather belt - Brown', 41, 39, 330],
+  ['Summer scarf - Floral', 36, 33, 210], ['Wool beanie - Navy', 29, 27, 150], ['Sport socks (3 pack)', 112, 104, 95], ['Phone case - Clear', 85, 80, 120],
+];
+const HUES = [200, 28, 340, 160, 260, 45, 190, 12, 300, 100, 220, 70];
+export function ProductsPage({ lang, showToast }: P) {
+  const [mode, setMode] = useState<'Single Search' | 'Multi Search'>('Single Search');
+  const [q, setQ] = useState('');
+  const [sort, setSort] = useState('No alphabetical sort');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const terms = mode === 'Multi Search' ? q.split(',').map(x => x.trim().toLowerCase()).filter(Boolean) : q.trim() ? [q.trim().toLowerCase()] : [];
+  let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i] })).filter(x => !terms.length || terms.some(t => x.n.toLowerCase().includes(t)));
+  if (sort === 'A to Z') list = [...list].sort((a, b) => a.n.localeCompare(b.n));
+  if (sort === 'Z to A') list = [...list].sort((a, b) => b.n.localeCompare(a.n));
+  const clear = () => { setQ(''); setSort('No alphabetical sort'); setFrom(''); setTo(''); };
+  const f = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' LE';
+  return (
+    <div className="prod-page">
+      <div className="prod-top">
+        <div className="card prod-search">
+          <div className="seg">{(['Single Search', 'Multi Search'] as const).map(m => <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{tr(lang, m, m === 'Single Search' ? 'بحث واحد' : 'بحث متعدد')}</button>)}</div>
+          <input className="inp" placeholder={mode === 'Single Search' ? 'Search products by name...' : 'Search several products, separated by commas'} value={q} onChange={e => setQ(e.target.value)} />
+        </div>
+        <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo)')}><I n="orders" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
+      </div>
+      <div className="card prod-filters">
+        <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['No alphabetical sort', 'A to Z', 'Z to A'].map(x => <option key={x}>{x}</option>)}</select>
+        <input className="inp" placeholder="Order number from" value={from} onChange={e => setFrom(e.target.value)} />
+        <input className="inp" placeholder="Order number to" value={to} onChange={e => setTo(e.target.value)} />
+        <button className="btn btn-ghost" onClick={clear}>{tr(lang, 'Clear filters', 'مسح الفلاتر')}</button>
+        <button className="btn btn-primary" onClick={() => showToast('Product report ready (demo)')}>{tr(lang, 'Product report', 'تقرير المنتجات')}</button>
+      </div>
+      <div className="kpi-grid prod-kpi">{[['Requested products', String(list.length)], ['Total requested quantity', String(list.reduce((s, x) => s + x.qty, 0))], ['Products value', f(list.reduce((s, x) => s + x.v, 0))]].map(([k, v]) => <div className="card kpi" key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
+      <div className="card prod-table">
+        <div className="prod-row head"><span>Product</span><span /><span>Quantity</span><span>Orders</span><span>Value</span><span>Unit price</span></div>
+        {list.map(x => <div className="prod-row" key={x.n}><b className="pn">{x.n}</b><span className="pimg" style={{ background: `linear-gradient(135deg, hsl(${x.hue} 70% 80%), hsl(${x.hue} 60% 60%))` }} /><span data-l="Quantity">{x.qty}</span><span data-l="Orders">{x.ord}</span><b data-l="Value">{f(x.v)}</b><span className="muted" data-l="Unit price">{f(x.unit)}</span></div>)}
+        {list.length === 0 && <div className="muted" style={{ padding: 20 }}>No products match.</div>}
+      </div>
+    </div>
+  );
+}
