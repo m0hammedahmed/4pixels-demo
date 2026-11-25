@@ -325,7 +325,7 @@ export function SalesPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="Verified from Shopify" title="Exact Shopify Sales" sub={tr(lang, 'Figures come from ShopifyQL using Shopify report definitions.', 'الأرقام مأخوذة من ShopifyQL حسب تعريفات تقارير Shopify.')}
-        right={<div className="btn-row"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Report refreshed')}>Refresh Report</button><button className="btn btn-primary btn-sm" onClick={() => showToast('Excel exported (demo, no real file)')}>Export Excel</button></div>} />
+        right={<div className="btn-row"><button className="btn btn-primary btn-sm" onClick={() => showToast('Excel exported (demo, no real file)')}>Export Excel</button></div>} />
       <div className="card card-pad filter-bar"><div className="range-box"><label className="lbl">Start Date</label><input type="date" className="inp" value={from} onChange={e => setFrom(e.target.value)} /></div><div className="range-box"><label className="lbl">End Date</label><input type="date" className="inp" value={to} onChange={e => setTo(e.target.value)} /></div><div className="range-box"><span className="muted small">Source: ShopifyQL • demo-store.myshopify.com • Africa/Cairo</span></div></div>
       <div className="card card-pad" style={{ marginTop: 16 }}>
         <div className="row-between wrap"><div><h3 className="h3">Bosta Delivery Verification</h3><p className="muted small" style={{ margin: 0 }}>An order counts as received only when Bosta confirms delivery. Fulfilled in Shopify is not proof of delivery or cash collection.</p></div><div className="btn-row"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Opening Bosta settings')}>Bosta Settings</button><button className="btn btn-primary btn-sm" onClick={() => showToast('Verified delivery statuses synced')}>Sync Verified Delivery Statuses</button></div></div>
@@ -355,7 +355,7 @@ export function CustomersPage({ lang, showToast, go }: P) {
   const ago = (t: number) => { const m = Math.round((DEMO_NOW - t) / 60000); return m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
   return (
     <div>
-      <Head eyebrow="CUSTOMER MANAGEMENT" title={tr(lang, 'Customers', 'العملاء')} sub="Every customer in one clear view with latest activity, order value, and open conversation status." right={<span className="chip green">Shopify · Connected and receiving data</span>} />
+      <Head eyebrow="CUSTOMER MANAGEMENT" title={tr(lang, 'Customers', 'العملاء')} sub="Every customer in one clear view with latest activity, order value, and open conversation status." />
       <div className="kpi-grid kpi-4">{[['Total customers', String(cust.length)], ['Total revenue', fmtMoney(cust.reduce((s, c) => s + c.value, 0))], ['Guarded customers', '3'], ['New customers', String(Math.round(cust.length * 0.3))]].map(([k, v]) => <div className="card kpi" key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
       <div className="tool-row"><input className="inp grow" placeholder="Search by name or phone" value={q} onChange={e => setQ(e.target.value)} />
         <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['Latest message', 'Latest activity', 'Created at', 'Name', 'Customer value'].map(x => <option key={x}>{x}</option>)}</select>
@@ -378,7 +378,7 @@ export function CartsPage({ lang, showToast }: P) {
   const rows = ORDERS.filter(o => o.source !== 'Shopify').slice(0, 10);
   return (
     <div>
-      <div className="page-bar cart-bar"><span className="muted small grow">Auto-send follows up on checkout drop-offs after the safe delay and skips completed orders.</span><button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo, no real file)')}>Export</button></div>
+      <div className="page-bar cart-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Abandoned carts exported (demo, no real file)')}>Export</button></div>
       <div className="two-col-flex cart-top">
         <div className="card card-pad grow">
           <p className="eyebrow">ABANDONED RECOVERY</p><h3 className="h3">Template, variables, preview</h3><p className="muted small">Choose the approved Meta template, map its variables, and save.</p>
@@ -407,7 +407,7 @@ export function MarketingPage({ lang, showToast, go }: P) {
   const elig = ORDERS.slice(0, 12);
   return (
     <div>
-      <Head eyebrow="CAMPAIGN STUDIO" title="WhatsApp Campaigns" sub="Choose a template, build the audience, personalize the data, and review every send from one workspace." right={<button className="btn btn-ghost btn-sm" onClick={() => showToast('Refreshed')}>Refresh</button>} />
+      <Head eyebrow="CAMPAIGN STUDIO" title="WhatsApp Campaigns" sub="Choose a template, build the audience, personalize the data, and review every send from one workspace." />
       <div className="kpi-grid kpi-4">{[['META LIMIT', '∞'], ['META USED 24H', '0'], ['META REMAINING', '∞'], ['CONSENTED', String(picked.length ? picked.length : 0)], ['CAMPAIGN AUDIENCE', String(picked.length)]].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
       <div className="stepper wide">{steps.map((s, i) => <button key={s} className={`st${step === i + 1 ? ' cur' : step > i + 1 ? ' done' : ''}`} onClick={() => setStep(i + 1)}><span>{step > i + 1 ? '✓' : i + 1}</span>{s}</button>)}</div>
       <div className="card card-pad">
@@ -469,7 +469,6 @@ export function OffersPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="SMART OFFER" title="Choose a Smart Offer flow" sub="Each flow has its own switch, settings, and save action." />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Smart Offers report exported (demo, no real file)')}>Export</button></div>
       <div className="two-box">{([['up', 'Upsell & Cross-sell', 'Post-confirmation offers for complementary or additional products.'], ['cancel', 'Cancellation Recovery', 'Recovery offers only after a real Shopify cancellation.']] as const).map(([k, t, d]) => <button key={k} className={`flow-card${flow === k ? ' on' : ''}`} onClick={() => setFlow(k)}><b>{t}</b><span className="muted small">{d}</span><span className={`chip ${en[k] ? 'green' : 'grey'}`}>{en[k] ? 'Enabled' : 'Disabled'}</span></button>)}</div>
       <div className="card card-pad" style={{ marginTop: 14 }}>
         <p className="eyebrow">SMART OFFERS</p><h3 className="h3">{flow === 'up' ? 'Send a catalog-wide, tracked WhatsApp cross-sell after every confirmed order.' : 'Win back customers after a Shopify cancellation.'}</h3>
@@ -501,7 +500,6 @@ export function RetentionPage({ lang, showToast }: P) {
   return (
     <div>
       <Head eyebrow="GROWTH AUTOMATION" title="Customer Retention" sub="Bring recent buyers back automatically. Every week, eligible customers receive a private one-time Shopify discount with a polished Meta marketing message." right={<div className="btn-row"><span className={`chip ${on ? 'green' : 'grey'}`}>{on ? 'Automation active' : 'Automation paused'}</span><span className="muted small">Next run: {on ? 'Mon 10:00' : '—'}</span><button className="btn btn-primary btn-sm" onClick={() => showToast('Run started (demo)')}>Run now</button></div>} />
-      <div className="page-bar"><button className="btn btn-ghost btn-sm" onClick={() => showToast('Retention report exported (demo, no real file)')}>Export</button></div>
 <Section title="Results" sub="Offers issued, messages sent, conversions">      <div className="kpi-grid kpi-4">{[['ACTIVE OFFERS', '0'], ['ISSUED', '83'], ['MESSAGES SENT', '0'], ['CLICKED', '0'], ['CONVERTED', '0'], ['FAILED', '83'], ['RECOVERED REVENUE', '0 EGP']].map(([k, v]) => <div className="card kpi" key={k}><div className="eyebrow">{k}</div><div className="kpi-v">{v}</div></div>)}</div></Section>
       <p className="muted small">Orders placed after a retention message are matched back to the customer automatically.</p>
       <div className="card card-pad" style={{ marginTop: 14 }}><p className="eyebrow">AUTOMATION RULES</p><div className="row-between"><h3 className="h3">Who should receive the weekly offer?</h3><label className="switch-row"><input type="checkbox" checked={on} onChange={e => setOn(e.target.checked)} />Enabled</label></div><p className="muted small">No customer picking. The CRM builds the audience automatically from recent orders. Up to 400 customers can be contacted in each weekly run.</p>
@@ -557,7 +555,7 @@ export function SettingsPage({ lang, showToast }: P) {
   const grp = [['conn', 'Connections & Billing', 'Accounts, providers and balances.'], ['ops', 'Operations', 'Customer journey and order controls.'], ['ws', 'Workspace', 'People, access and app preferences.']];
   return (
     <div>
-      <Head eyebrow="4PIXELS CRM" title="Settings" sub="Connections, billing and workspace controls — organized without the clutter." right={<span className="chip green">Live workspace</span>} />
+      <Head eyebrow="4PIXELS CRM" title="Settings" sub="Connections, billing and workspace controls — organized without the clutter." />
       <div className="set-cols">{grp.map(([g, t, d]) => <div className="card card-pad" key={g}><h3 className="h3">{t}</h3><p className="muted small">{d}</p>{tiles.filter(x => x[0] === g).map(x => <button key={x[1]} className="tile" onClick={() => setOpen(x[1])}><span className="tile-ic"><I n={x[3]} size={18} /></span><span className="grow"><b>{x[1]}</b><small>{x[2]}</small></span><I n="back" size={12} /></button>)}</div>)}</div>
       {open && <div className="drawer-back" onClick={() => setOpen(null)}><div className="modal" onClick={e => e.stopPropagation()}><h3 className="h3">{open}</h3>
         {open === 'Shopify Store' ? <><div className="field"><label>Store domain</label><input value="demo-store.myshopify.com" readOnly /></div><div className="row-between"><span>Connection</span><span className="chip green">Connected</span></div><div className="row-between"><span>Webhooks</span><span className="chip green">Receiving</span></div><button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => showToast('Store sync started')}>Sync store</button></> : open === 'Delivery & Bosta' ? <><div className="field"><label>Bosta API key</label><input type="password" value="demo-key-hidden" readOnly /></div><div className="row-between"><span>Shipment checks</span><span className="chip green">On</span></div></> : <SettingsPanel name={open} />}
