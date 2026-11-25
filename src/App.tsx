@@ -89,7 +89,7 @@ export default function App() {
       {PUB.includes(page) ? (
         <PublicSite lang={lang} setLang={setLang} go={go} page={page} />
       ) : page === 'login' ? (
-        <AuthPage mode="login" lang={lang} setLang={setLang} go={go} onDone={() => go(connected ? 'dashboard' : 'connect')} />
+        <AuthPage mode="login" lang={lang} setLang={setLang} go={go} onDone={(signup) => go(connected && !signup ? 'dashboard' : 'connect')} />
       ) : page === 'connect' ? (
         <ConnectPage lang={lang} setLang={setLang} go={go} onDone={() => { setConnected(true); go('dashboard'); }} />
       ) : (
@@ -864,7 +864,7 @@ function AuthShell({ lang, setLang, go, children }: { lang: Lang; setLang: (l: L
   );
 }
 
-function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: () => void }) {
+function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: (signup?: boolean) => void }) {
   const ar = lang === 'ar';
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('demo@store.com');
@@ -881,7 +881,7 @@ function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; set
         <p className="muted">{tab === 'login' ? (ar ? 'اكتب الإيميل والباسورد وادخل على الـ CRM.' : 'Enter your email and password to go straight into the CRM.') : (ar ? 'حساب جديد في أقل من دقيقة، وبعدها تربط Shopify.' : 'A new account in under a minute, then connect Shopify.')}</p>
         <div className="field"><label>{ar ? 'الإيميل' : 'Email address'}</label><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@store.com" /></div>
         <div className="field"><label>{ar ? 'الباسورد' : 'Password'}</label><input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="Enter your password" /></div>
-        <button className="btn btn-primary btn-block" onClick={onDone}>{tab === 'login' ? (ar ? 'دخول' : 'Sign in') : (ar ? 'إنشاء الحساب' : 'Create account')}</button>
+        <button className="btn btn-primary btn-block" onClick={() => onDone(tab === 'signup')}>{tab === 'login' ? (ar ? 'دخول' : 'Sign in') : (ar ? 'إنشاء الحساب' : 'Create account')}</button>
         <p className="small muted" style={{ marginTop: 14 }}>{ar ? 'ده ديمو: أي بيانات تدخل بيها شغالة.' : 'This is a demo: any details will work.'}</p>
       </div>
     </AuthShell>
@@ -890,30 +890,65 @@ function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; set
 
 function ConnectPage({ lang, setLang, go, onDone }: { lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: () => void }) {
   const ar = lang === 'ar';
+  const [step, setStep] = useState<'shopify' | 'wa'>('shopify');
   const [domain, setDomain] = useState('cairo-streetwear.myshopify.com');
   const [phase, setPhase] = useState<'idle' | 'auth' | 'sync'>('idle');
   const [pct, setPct] = useState(0);
+  const [mode, setMode] = useState<'coex' | 'new'>('coex');
+  const [num, setNum] = useState('+20 100 555 0199');
+  const [wph, setWph] = useState<'idle' | 'qr' | 'verify' | 'ok'>('idle');
   const start = () => {
     setPhase('auth');
     window.setTimeout(() => {
       setPhase('sync');
       let p = 0;
-      const iv = window.setInterval(() => { p += 12; setPct(Math.min(p, 100)); if (p >= 100) { window.clearInterval(iv); window.setTimeout(onDone, 400); } }, 220);
+      const iv = window.setInterval(() => { p += 12; setPct(Math.min(p, 100)); if (p >= 100) { window.clearInterval(iv); window.setTimeout(() => setStep('wa'), 400); } }, 220);
     }, 1100);
   };
-  const steps = [ar ? 'تسجيل الدخول' : 'Sign in', ar ? 'ربط Shopify' : 'Connect Shopify', ar ? 'لوحة التحكم' : 'Dashboard'];
+  const startWa = () => {
+    setWph(mode === 'coex' ? 'qr' : 'verify');
+    if (mode === 'new') window.setTimeout(() => setWph('ok'), 1500);
+  };
+  const scanned = () => { setWph('verify'); window.setTimeout(() => setWph('ok'), 1500); };
+  const cur = step === 'shopify' ? 1 : 2;
+  const steps = [ar ? 'إنشاء الحساب' : 'Account', 'Shopify', 'WhatsApp', ar ? 'لوحة التحكم' : 'Dashboard'];
   return (
     <AuthShell lang={lang} setLang={setLang} go={go}>
       <div className="auth-card">
-        <div className="stepper">{steps.map((s, i) => <div key={s} className={`st${i < 1 ? ' done' : ''}${i === 1 ? ' cur' : ''}`}><span>{i < 1 ? '✓' : i + 1}</span>{s}</div>)}</div>
-        <p className="eyebrow">SHOPIFY</p>
-        <h1>{ar ? 'اربط متجر Shopify' : 'Connect your Shopify store'}</h1>
-        <p className="muted">{ar ? 'هنسحب الأوردرات والعملاء والمنتجات تلقائياً، وكل أوردر جديد بيظهر لحظياً.' : 'We sync orders, customers and products automatically, and new orders appear in real time.'}</p>
-        <div className="field"><label>{ar ? 'دومين المتجر' : 'Store domain'}</label><input value={domain} onChange={e => setDomain(e.target.value)} disabled={phase !== 'idle'} /></div>
-        {phase === 'idle' && <button className="btn btn-primary btn-block" onClick={start}><I n="shopify" size={16} />{ar ? 'اربط Shopify' : 'Connect Shopify'}</button>}
-        {phase === 'auth' && <div className="sync-box"><div className="spin" />{ar ? 'بنفتح صلاحيات Shopify...' : 'Authorizing with Shopify...'}</div>}
-        {phase === 'sync' && <div className="sync-box col"><div>{ar ? 'بنسحب الأوردرات والعملاء...' : 'Syncing orders and customers...'}</div><div className="bar-track"><div style={{ width: `${pct}%`, height: '100%', background: 'var(--accent)', borderRadius: 100, transition: 'width .2s' }} /></div></div>}
-        <button className="link-btn" onClick={onDone}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>
+        <div className="stepper">{steps.map((s, i) => <div key={s} className={`st${i < cur ? ' done' : ''}${i === cur ? ' cur' : ''}`}><span>{i < cur ? '✓' : i + 1}</span>{s}</div>)}</div>
+        {step === 'shopify' ? (<>
+          <p className="eyebrow">{ar ? 'الخطوة 2 من 3' : 'STEP 2 OF 3'}</p>
+          <h1>{ar ? 'اربط متجر Shopify' : 'Connect your Shopify store'}</h1>
+          <p className="muted">{ar ? 'هنسحب الأوردرات والعملاء والمنتجات تلقائياً، وكل أوردر جديد بيظهر لحظياً.' : 'We sync orders, customers and products automatically, and new orders appear in real time.'}</p>
+          <div className="field"><label>{ar ? 'دومين المتجر' : 'Store domain'}</label><input value={domain} onChange={e => setDomain(e.target.value)} disabled={phase !== 'idle'} /></div>
+          {phase === 'idle' && <button className="btn btn-primary btn-block" onClick={start}><I n="shopify" size={16} />{ar ? 'اربط Shopify' : 'Connect Shopify'}</button>}
+          {phase === 'auth' && <div className="sync-box"><div className="spin" />{ar ? 'بنفتح صلاحيات Shopify...' : 'Authorizing with Shopify...'}</div>}
+          {phase === 'sync' && <div className="sync-box col"><div>{ar ? 'بنسحب الأوردرات والعملاء...' : 'Syncing orders and customers...'}</div><div className="bar-track"><div style={{ width: `${pct}%`, height: '100%', background: 'var(--accent)', borderRadius: 100, transition: 'width .2s' }} /></div></div>}
+          <button className="link-btn" onClick={() => setStep('wa')}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>
+        </>) : (<>
+          <p className="eyebrow">{ar ? 'الخطوة 3 من 3' : 'STEP 3 OF 3'}</p>
+          <h1>{ar ? 'اربط واتساب بزنس' : 'Connect WhatsApp Business'}</h1>
+          <p className="muted">{ar ? 'اختار إزاي عايز تربط الرقم اللي عملاءك بيكلموك عليه.' : 'Choose how to link the number your customers already message.'}</p>
+          {wph === 'idle' && (<>
+            <div className="opt-list">
+              <button className={`opt${mode === 'coex' ? ' on' : ''}`} onClick={() => setMode('coex')}><b>{ar ? 'استخدم رقمك الحالي (Coexistence)' : 'Use your current number (Coexistence)'}<span className="chip green">{ar ? 'مُوصى' : 'Recommended'}</span></b><small>{ar ? 'تكمل على تطبيق واتساب بزنس في موبايلك، والـ CRM يشتغل جنبه على نفس الرقم.' : 'Keep using the WhatsApp Business app on your phone. 4Pixels works alongside it on the same number.'}</small></button>
+              <button className={`opt${mode === 'new' ? ' on' : ''}`} onClick={() => setMode('new')}><b>{ar ? 'رقم جديد (Cloud API)' : 'A new number (Cloud API)'}</b><small>{ar ? 'رقم مخصص للـ CRM فقط، مش بيشتغل على التطبيق.' : 'A number used only by the CRM. It will not work in the phone app.'}</small></button>
+            </div>
+            <div className="field"><label>{ar ? 'رقم الواتساب' : 'WhatsApp number'}</label><input value={num} onChange={e => setNum(e.target.value)} /></div>
+            <button className="btn btn-primary btn-block" onClick={startWa}>{ar ? 'ابدأ الربط' : 'Continue'}</button>
+          </>)}
+          {wph === 'qr' && (<div className="sync-box col" style={{ alignItems: 'center', textAlign: 'center' }}>
+            <div className="qr" aria-hidden>{Array.from({ length: 225 }).map((_, i) => { const r = Math.floor(i / 15), c = i % 15; const f = (r < 5 && c < 5) || (r < 5 && c > 9) || (r > 9 && c < 5); const ring = (x: number, y: number) => x === 0 || y === 0 || x === 4 || y === 4 || (x === 2 && y === 2); const fx = c > 9 ? c - 10 : c, fy = r > 9 ? r - 10 : r; const on = f ? ring(fx, fy) : ((((r + 3) * 2654435761) ^ ((c + 5) * 40503) ^ (r * c * 97)) >>> 3) % 2 === 0; return <i key={i} className={on ? 'k' : ''} />; })}</div>
+            <div>{ar ? 'افتح واتساب بزنس على موبايلك ← الإعدادات ← الأجهزة المرتبطة ← امسح الكود.' : 'On your phone open WhatsApp Business, then Settings, Linked devices, and scan this code.'}</div>
+            <button className="btn btn-primary" onClick={scanned}>{ar ? 'مسحت الكود' : 'I scanned it'}</button>
+          </div>)}
+          {wph === 'verify' && <div className="sync-box"><div className="spin" />{ar ? 'بنتأكد من الربط ومزامنة المحادثات...' : 'Verifying and syncing your chats...'}</div>}
+          {wph === 'ok' && (<>
+            <div className="sync-box" style={{ color: '#047857' }}><I n="check" size={16} />{ar ? 'الرقم' : 'Number'} {num} {ar ? 'اتربط بنجاح' : 'is connected'}</div>
+            <button className="btn btn-primary btn-block" onClick={onDone}>{ar ? 'افتح لوحة التحكم' : 'Go to dashboard'}</button>
+          </>)}
+          {wph !== 'ok' && <button className="link-btn" onClick={onDone}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>}
+        </>)}
       </div>
     </AuthShell>
   );
