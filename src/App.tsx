@@ -77,6 +77,7 @@ export default function App() {
 
   const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact'];
   const [connected, setConnected] = useState(initial !== 'home' && !PUB.includes(initial) && initial !== 'login' && initial !== 'connect');
+  useEffect(() => { const names: Record<string, string> = { home: 'Home', about: 'About', features: 'Features', pricing: 'Pricing', projects: 'Projects', contact: 'Contact', login: 'Sign in', connect: 'Connect your store', dashboard: 'Dashboard', overview: 'Dashboard', orders: 'Orders', chats: 'Chat', sales: 'Shopify Sales', customers: 'Customers', carts: 'Abandoned Carts', templates: 'Marketing', sms: 'SMS', automations: 'Smart Offers', retention: 'Retention', loyalty: 'Loyalty & Rewards', billing: 'Plan & Billing', settings: 'Settings' }; document.title = (names[page] || 'Page not found') + ' | 4Pixels'; }, [page]);
   const go = (p: string) => {
     if (p === 'dashboard' && !connected) p = 'connect';
     if (p === 'landing') p = 'home';
@@ -230,6 +231,9 @@ function Shell(props: {
     ] },
   ];
   const pageKey = page === 'dashboard' ? 'overview' : page;
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { setLoading(true); const id = window.setTimeout(() => setLoading(false), 260); return () => window.clearTimeout(id); }, [pageKey]);
+  const KNOWN = ['overview', 'orders', 'chats', 'sales', 'customers', 'carts', 'templates', 'sms', 'automations', 'retention', 'loyalty', 'billing', 'settings', 'delivery'];
 
   return (
     <div className="shell">
@@ -313,20 +317,22 @@ function Shell(props: {
         )}
 
         <div className={`content${pageKey === 'chats' ? ' content-wide' : ''}`} onClick={() => { if (notifOpen) setNotifOpen(false); }}>
-          {pageKey === 'overview' && <DashboardPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'orders' && <OrdersPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'chats' && <ChatPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'sales' && <SalesNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'customers' && <CustNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'carts' && <CartsNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'templates' && <MarketingPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'sms' && <SmsNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'automations' && <OffersPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'retention' && <RetNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'loyalty' && <LoyNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'billing' && <PlanPage lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'settings' && <SetNew lang={lang} showToast={showToast} go={go} />}
-          {pageKey === 'delivery' && <DeliveryPage t={t} />}
+          {loading && KNOWN.includes(pageKey) && <div className="skel"><i style={{ width: '38%' }} /><div className="skel-row"><i /><i /><i /></div><i style={{ height: 180 }} /><i style={{ height: 120 }} /></div>}
+          {!loading && !KNOWN.includes(pageKey) && <div className="card card-pad nf"><h1>404</h1><p className="muted">This page does not exist.</p><button className="btn btn-primary" onClick={() => go('dashboard')}>Back to dashboard</button></div>}
+          {!loading && pageKey === 'overview' && <DashboardPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'orders' && <OrdersPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'chats' && <ChatPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'sales' && <SalesNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'customers' && <CustNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'carts' && <CartsNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'templates' && <MarketingPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'sms' && <SmsNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'automations' && <OffersPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'retention' && <RetNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'loyalty' && <LoyNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'billing' && <PlanPage lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'settings' && <SetNew lang={lang} showToast={showToast} go={go} />}
+          {!loading && pageKey === 'delivery' && <DeliveryPage t={t} />}
         </div>
       </div>
     </div>

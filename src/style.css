@@ -738,3 +738,8 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .composer .seg.mode button { padding: 6px 10px; font-size: 12.5px; }
 .modal .row-between { padding: 6px 0; }
 .trial-btn { padding: 6px 14px 7px; line-height: 1.2; }
+.skel { display: grid; gap: 14px; } .skel i { display: block; height: 28px; border-radius: 14px; background: linear-gradient(90deg,#e8eef6 25%,#f3f7fc 50%,#e8eef6 75%); background-size: 200% 100%; animation: sk 1s infinite linear; }
+.skel-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; } .skel-row i { height: 96px; }
+@keyframes sk { to { background-position: -200% 0; } }
+.nf { text-align: center; padding: 56px 20px; } .nf h1 { font-size: 64px; margin: 0; color: #0284c7; }
+.meter { margin-top: 12px; } .mtrack { height: 8px; border-radius: 99px; background: #e2e8f0; margin-top: 6px; overflow: hidden; } .mtrack i { display: block; height: 100%; background: #0ea5e9; border-radius: 99px; }
