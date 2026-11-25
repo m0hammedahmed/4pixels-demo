@@ -49,6 +49,8 @@ export function DashboardPage({ lang, showToast, go }: P) {
   const r = rangeFor(range, custom);
   const iso = (ms: number) => { const d = new Date(ms); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const [guideDone, setGuideDone] = useState(() => { try { return localStorage.getItem('fp-guide') === '1'; } catch { return false; } });
+  const [doneSteps, setDoneSteps] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem('fp-steps') || '[]'); } catch { return []; } });
+  const markStep = (n: string) => { const d = doneSteps.includes(n) ? doneSteps : [...doneSteps, n]; setDoneSteps(d); try { localStorage.setItem('fp-steps', JSON.stringify(d)); if (d.length >= 4) localStorage.setItem('fp-guide', '1'); } catch { /* ignore */ } };
   const dismiss = () => { try { localStorage.setItem('fp-guide', '1'); } catch { /* ignore */ } setGuideDone(true); };
   const list = ORDERS.filter(o => o.date >= r.from && o.date < r.to);
   const scoped = scope === 'All statuses' ? list : list.filter(o => (scope === 'Confirmed & Fulfilled' ? o.status === 'Confirmed' || o.status === 'Fulfilled' : o.status === scope || (scope === 'Returned / RTO' && o.status === 'Return') || (scope === 'Cancelled' && o.status === 'Cancelled')));
@@ -80,8 +82,8 @@ export function DashboardPage({ lang, showToast, go }: P) {
         <label className="dash-status">Status<select className="inp" value={scope} onChange={e => setScope(e.target.value)}>{['All statuses', 'Pending', 'Confirmed', 'Confirmed & Fulfilled', 'Returned / RTO', 'Customer cancel', 'Cancelled'].map(x => <option key={x}>{x}</option>)}</select></label>
       </div>
       {!guideDone && <div className="card guide">
-        <div className="row-between"><div><h3 className="h3">Welcome! Get started in 4 steps</h3><p className="muted small" style={{ margin: '2px 0 0' }}>Tap a step to jump straight in.</p></div><button className="btn btn-ghost btn-sm" onClick={dismiss}>Skip, I know my way</button></div>
-        <div className="guide-steps">{steps.map(([n, t, d, k]) => <button key={n} className="guide-step" onClick={() => { dismiss(); go(k); }}><span className="gs-n">{n}</span><span className="gs-t"><b>{t}</b><small>{d}</small></span><span className="gs-go">›</span></button>)}</div>
+        <div className="row-between"><div style={{ flex: 1 }}><h3 className="h3">Welcome! Get started in 4 steps</h3><p className="muted small" style={{ margin: '2px 0 0' }}>Tap a step to jump straight in. {doneSteps.length} of 4 done.</p><div className="gbar"><i style={{ width: `${doneSteps.length * 25}%` }} /></div></div><button className="btn btn-ghost btn-sm" onClick={dismiss}>Skip, I know my way</button></div>
+        <div className="guide-steps">{steps.map(([n, t, d, k]) => <button key={n} className={`guide-step${doneSteps.includes(n) ? ' done' : ''}`} onClick={() => { markStep(n); go(k); }}><span className="gs-n">{doneSteps.includes(n) ? '✓' : n}</span><span className="gs-t"><b>{t}</b><small>{d}</small></span><span className="gs-go">›</span></button>)}</div>
       </div>}
       <div className="kpi-grid kpi-4" style={{ marginTop: 20 }}>
         <div className="card kpi"><div className="small k-t">Total Orders</div><div className="kpi-v">{list.length}</div><div className="small muted">{range}</div></div>

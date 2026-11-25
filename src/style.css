@@ -698,3 +698,6 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .card .section { box-shadow: none; border: 0; background: transparent; margin: 8px 0 0; padding: 0; }
 .card .section .section-head.static { padding-inline: 0; }
 .card .section .section-body { padding-inline: 0; }
+.gbar { height: 6px; background: #e0f2fe; border-radius: 6px; margin-top: 10px; max-width: 320px; overflow: hidden; } .gbar i { display: block; height: 100%; background: #0284c7; transition: width .3s; }
+.guide-step.done { background: #f0fdf4; border-color: #bbf7d0; } .guide-step.done .gs-n { background: #16a34a; }
+.dash .brk { width: 100%; } .dash .brk-row { width: 100%; }
