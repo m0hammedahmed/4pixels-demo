@@ -26,7 +26,6 @@ const paths: Record<string, string> = {
   whatsapp: 'M12 2a10 10 0 00-8.6 15.1L2 22l5.1-1.3A10 10 0 1012 2zm0 2a8 8 0 110 16 8 8 0 01-4-.9l-.3-.2-2.8.7.7-2.7-.2-.3A8 8 0 0112 4zm-3 3.5c-.2 0-.5.1-.7.3-.6.6-1 1.5-.7 2.6.4 1.3 1.3 2.8 2.7 4 1.6 1.5 3 2.1 4.3 2.3 1 .2 1.9-.2 2.4-.8.2-.3.4-.8.4-1.2v-.7l-2.3-1.1-.6.3-.8.8c-.9-.4-2.2-1.3-2.9-2.5l.7-.8.3-.6-1.2-2.3-.7-.3z',
   instagram: 'M12 2c3 0 3.4 0 4.6.1 3.1.1 4.8 1.7 4.9 4.9.1 1.2.1 1.6.1 4.6s0 3.4-.1 4.6c-.1 3.1-1.7 4.8-4.9 4.9-1.2.1-1.6.1-4.6.1s-3.4 0-4.6-.1c-3.1-.1-4.8-1.7-4.9-4.9C2.4 15.4 2.4 15 2.4 12s0-3.4.1-4.6C2.6 4.3 4.2 2.7 7.3 2.6 8.6 2.5 9 2.5 12 2.5zm0 4.9a4.6 4.6 0 100 9.2 4.6 4.6 0 000-9.2zm0 7.6a3 3 0 110-6 3 3 0 010 6zm5.9-9.5a1.1 1.1 0 11-2.2 0 1.1 1.1 0 012.2 0z',
   messenger: 'M12 2a10 10 0 00-9.9 11.4c.2 2 .9 3.8 2 5.3V22l3.4-1.9c1.4.4 2.9.6 4.5.6A10 10 0 0012 2zm-4 11l3.5-4 3 3 3.5-3-4 5.5-3-3L7 16l-1-1.5L7 13z',
-  tiktok: 'M16.5 2c.4 2.3 1.9 3.8 4.5 4v3.2c-1.6 0-3-.5-4.2-1.3v6.6A6.3 6.3 0 1110.5 8v3.4a3 3 0 103 3V2h3z',
   shopify: 'M14 2l5 2-1 18-7 2-8-3V5l6-1 4-2zM9 8c-1.5.3-3 .9-3 2 0 2 4 2.4 4 4.5 0 1.5-1.3 2.5-3 2.5-1 0-2-.4-2.5-.8l.5-1.6c.5.3 1.2.6 1.8.6.7 0 1-.4 1-.9 0-1.4-3.6-1.4-3.6-4.2 0-2 1.7-3.1 3.8-3.3L9 8z',
   inbox: 'M3 3h18v18H3V3zm2 2v8h4a3 3 0 006 0h4V5H5z',
   profit: 'M3 3v18h18v-2H5V3H3zm4 12l4-5 3 3 5-7 1.5 1.2-6.5 9.2-3-3-3 3.6L7 15z',
@@ -70,12 +69,20 @@ export default function App() {
   const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
   const [notifOpen, setNotifOpen] = useState(false);
 
-  const go = (p: string) => { setPage(p); setMenuOpen(false); window.scrollTo(0, 0); };
+  const [connected, setConnected] = useState(false);
+  const go = (p: string) => {
+    if (p === 'dashboard' && !connected) p = 'connect';
+    setPage(p); setMenuOpen(false); window.scrollTo(0, 0);
+  };
 
   return (
     <div dir={dir} className={dir === 'rtl' ? 'rtl-root' : ''}>
       {page === 'landing' ? (
         <Landing t={t} lang={lang} setLang={setLang} go={go} />
+      ) : page === 'login' ? (
+        <AuthPage mode="login" lang={lang} setLang={setLang} go={go} onDone={() => go(connected ? 'dashboard' : 'connect')} />
+      ) : page === 'connect' ? (
+        <ConnectPage lang={lang} setLang={setLang} go={go} onDone={() => { setConnected(true); setPage('dashboard'); }} />
       ) : (
         <Shell
           t={t} lang={lang} setLang={setLang} page={page} go={go}
@@ -98,7 +105,7 @@ function Landing({ t, lang, setLang, go }: { t: (k: string) => string; lang: Lan
         <div className="brand"><span className="brand-mark">4P</span>4Pixels</div>
         <div className="actions">
           <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}>{t('common.language')}</button>
-          <button className="btn btn-primary btn-sm" onClick={() => go('dashboard')}>{t('land.ctaDemo')}</button>
+          <button className="btn btn-primary btn-sm" onClick={() => go('login')}>{t('land.ctaDemo')}</button>
         </div>
       </nav>
 
@@ -108,8 +115,8 @@ function Landing({ t, lang, setLang, go }: { t: (k: string) => string; lang: Lan
           <h1>{t('land.heroTitle')}</h1>
           <p className="sub">{t('land.heroSub')}</p>
           <div className="cta-row">
-            <button className="btn btn-primary" onClick={() => go('dashboard')}>{t('land.ctaStart')}</button>
-            <button className="btn btn-ghost" onClick={() => go('dashboard')}>{t('land.ctaDemo')}</button>
+            <button className="btn btn-primary" onClick={() => go('login')}>{t('land.ctaStart')}</button>
+            <button className="btn btn-ghost" onClick={() => go('login')}>{t('land.ctaDemo')}</button>
           </div>
         </div>
         <div className="hero-media hero-mock">
@@ -164,7 +171,7 @@ function Landing({ t, lang, setLang, go }: { t: (k: string) => string; lang: Lan
               <h3>{p.name[lang]}</h3>
               <div className="amount">{fmt(p.price)} <small>{t('common.egp')}{t('land.perMonth')}</small></div>
               <ul>{p.features[lang].map((f, j) => <li key={j}>{f}</li>)}</ul>
-              <button className={`btn ${p.popular ? 'btn-primary' : 'btn-ghost'}`} onClick={() => go('dashboard')}>{t('land.choose')}</button>
+              <button className={`btn ${p.popular ? 'btn-primary' : 'btn-ghost'}`} onClick={() => go('login')}>{t('land.choose')}</button>
             </div>
           ))}
         </div>
@@ -188,20 +195,49 @@ function Shell(props: {
   showToast: (m: string) => void;
 }) {
   const { t, lang, setLang, page, go, menuOpen, setMenuOpen, notifs, setNotifs, notifOpen, setNotifOpen, showToast } = props;
-  const NAV = ['overview', 'orders', 'chats', 'automations', 'templates', 'loyalty', 'sms', 'retention', 'delivery', 'settings'];
+  const GROUPS: { g: string; items: { k: string; page: string; icon: string; badge?: string }[] }[] = [
+    { g: 'workspace', items: [
+      { k: 'chat', page: 'chats', icon: 'chats', badge: '3' },
+      { k: 'dashboard', page: 'overview', icon: 'overview' },
+      { k: 'sales', page: 'sales', icon: 'shopify', badge: 'EXACT' },
+      { k: 'orders', page: 'orders', icon: 'orders' },
+      { k: 'customers', page: 'customers', icon: 'inbox' },
+    ] },
+    { g: 'growth', items: [
+      { k: 'carts', page: 'carts', icon: 'cart' },
+      { k: 'marketing', page: 'templates', icon: 'templates' },
+      { k: 'sms', page: 'sms', icon: 'sms' },
+      { k: 'offers', page: 'automations', icon: 'auto' },
+      { k: 'retention', page: 'retention', icon: 'retention' },
+      { k: 'loyaltyR', page: 'loyalty', icon: 'loyalty' },
+    ] },
+    { g: 'account', items: [
+      { k: 'billing', page: 'billing', icon: 'profit' },
+      { k: 'settings', page: 'settings', icon: 'settings' },
+    ] },
+  ];
   const pageKey = page === 'dashboard' ? 'overview' : page;
 
   return (
     <div className="shell">
       <aside className={`sidebar${menuOpen ? ' open' : ''}`}>
-        <div className="brand"><span className="brand-mark">4P</span>4Pixels</div>
-        {NAV.map(k => (
-          <button key={k} className={`side-link${pageKey === k ? ' active' : ''}`} onClick={() => go(k)}>
-            <I n={k} size={18} />{t(`nav.${k}`)}
-          </button>
-        ))}
+        <div className="brand"><span className="brand-mark">4P</span><span>4Pixels<small>CRM &amp; E-COMMERCE</small></span></div>
+        <div className="ws-card"><span>moon@gmail.com</span><span className="ws-pill">USER</span></div>
+        <div className="side-scroll">
+          {GROUPS.map(gr => (
+            <div key={gr.g}>
+              <div className="side-group">{t(`nav.g.${gr.g}`)}</div>
+              {gr.items.map(it => (
+                <button key={it.k} className={`side-link${pageKey === it.page ? ' active' : ''}`} onClick={() => go(it.page)}>
+                  <span className="side-ic"><I n={it.icon} size={17} /></span>{t(`nav.${it.k}`)}
+                  {it.badge && <span className={it.badge === 'EXACT' ? 'exact-pill' : 'nav-badge'}>{it.badge}</span>}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
         <div className="side-foot">
-          <button className="side-link" onClick={() => go('landing')}><I n="back" size={18} />{t('nav.backToSite')}</button>
+          <button className="logout-btn" onClick={() => go('login')}><I n="back" size={18} />{t('nav.logout')}</button>
         </div>
       </aside>
 
@@ -244,6 +280,7 @@ function Shell(props: {
         )}
 
         <div className="content" onClick={() => { if (notifOpen) setNotifOpen(false); }}>
+          <div className="trial-banner"><strong>{lang === 'ar' ? 'تجربة مجانية كاملة 5 أيام' : '5-day full-access free trial'}</strong><span>{lang === 'ar' ? 'كل مميزات الـ CRM مفتوحة لحد 30/11/2026' : 'Every CRM feature is unlocked until 11/30/2026.'}</span></div>
           {pageKey === 'overview' && <Dashboard t={t} lang={lang} go={go} />}
           {pageKey === 'orders' && <OrdersPage t={t} showToast={showToast} />}
           {pageKey === 'chats' && <ChatsPage t={t} />}
@@ -253,6 +290,10 @@ function Shell(props: {
           {pageKey === 'sms' && <SmsPage t={t} showToast={showToast} />}
           {pageKey === 'retention' && <RetentionPage t={t} />}
           {pageKey === 'delivery' && <DeliveryPage t={t} />}
+          {pageKey === 'sales' && <SalesPage lang={lang} />}
+          {pageKey === 'customers' && <CustomersPage lang={lang} />}
+          {pageKey === 'carts' && <CartsPage lang={lang} showToast={showToast} />}
+          {pageKey === 'billing' && <BillingPage lang={lang} />}
           {pageKey === 'settings' && <SettingsPage t={t} lang={lang} showToast={showToast} />}
         </div>
       </div>
@@ -471,14 +512,14 @@ function ChatsPage({ t }: { t: (k: string) => string }) {
     setDraft('');
   };
 
-  const chanIcon: Record<string, string> = { whatsapp: 'whatsapp', instagram: 'instagram', messenger: 'messenger', tiktok: 'tiktok' };
+  const chanIcon: Record<string, string> = { whatsapp: 'whatsapp', instagram: 'instagram', messenger: 'messenger' };
 
   return (
     <div>
       <div className="page-head"><h1>{t('chats.title')}</h1></div>
       <div className="tabs">
         <button className={`tab${chanFilter === 'all' ? ' active' : ''}`} onClick={() => setChanFilter('all')}>{t('chats.all')}</button>
-        {(['whatsapp', 'instagram', 'messenger', 'tiktok'] as const).map(c => (
+        {(['whatsapp', 'instagram', 'messenger'] as const).map(c => (
           <button key={c} className={`tab${chanFilter === c ? ' active' : ''}`} onClick={() => setChanFilter(c)}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><I n={chanIcon[c]} size={14} />{c[0].toUpperCase() + c.slice(1)}</span>
           </button>
@@ -797,6 +838,131 @@ function SettingsPage({ t, lang, showToast }: { t: (k: string) => string; lang: 
           <div className="set-row"><span className="k">{t('set.payMethod')}</span><span>InstaPay · 01066184859</span></div>
         </div>
       </div>
+    </div>
+  );
+}
+
+
+/* ================= AUTH + CONNECT ================= */
+function AuthShell({ lang, setLang, go, children }: { lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; children: React.ReactNode }) {
+  return (
+    <div className="auth-page">
+      <div className="auth-top">
+        <button className="brand" onClick={() => go('landing')}><span className="brand-mark">4P</span><span>4Pixels<small>CRM &amp; E-COMMERCE</small></span></button>
+        <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}>{lang === 'en' ? 'عربي' : 'EN'}</button>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: () => void }) {
+  const ar = lang === 'ar';
+  const [tab, setTab] = useState<'login' | 'signup'>('login');
+  const [email, setEmail] = useState('moon@gmail.com');
+  const [pw, setPw] = useState('demo-password');
+  return (
+    <AuthShell lang={lang} setLang={setLang} go={go}>
+      <div className="auth-card">
+        <div className="seg">
+          <button className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>{ar ? 'تسجيل دخول' : 'Login'}</button>
+          <button className={tab === 'signup' ? 'on' : ''} onClick={() => setTab('signup')}>{ar ? 'إنشاء حساب' : 'Create account'}</button>
+        </div>
+        <p className="eyebrow">WORKSPACE ACCESS</p>
+        <h1>{tab === 'login' ? (ar ? 'أهلاً بيك تاني' : 'Welcome back') : (ar ? 'ابدأ تجربتك المجانية' : 'Start your free trial')}</h1>
+        <p className="muted">{tab === 'login' ? (ar ? 'اكتب الإيميل والباسورد وادخل على الـ CRM.' : 'Enter your email and password to go straight into the CRM.') : (ar ? 'حساب جديد في أقل من دقيقة، وبعدها تربط Shopify.' : 'A new account in under a minute, then connect Shopify.')}</p>
+        <div className="field"><label>{ar ? 'الإيميل' : 'Email address'}</label><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@store.com" /></div>
+        <div className="field"><label>{ar ? 'الباسورد' : 'Password'}</label><input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="Enter your password" /></div>
+        <button className="btn btn-primary btn-block" onClick={onDone}>{tab === 'login' ? (ar ? 'دخول' : 'Sign in') : (ar ? 'إنشاء الحساب' : 'Create account')}</button>
+        <p className="small muted" style={{ marginTop: 14 }}>{ar ? 'ده ديمو: أي بيانات تدخل بيها شغالة.' : 'This is a demo: any details will work.'}</p>
+      </div>
+    </AuthShell>
+  );
+}
+
+function ConnectPage({ lang, setLang, go, onDone }: { lang: Lang; setLang: (l: Lang) => void; go: (p: string) => void; onDone: () => void }) {
+  const ar = lang === 'ar';
+  const [domain, setDomain] = useState('cairo-streetwear.myshopify.com');
+  const [phase, setPhase] = useState<'idle' | 'auth' | 'sync'>('idle');
+  const [pct, setPct] = useState(0);
+  const start = () => {
+    setPhase('auth');
+    window.setTimeout(() => {
+      setPhase('sync');
+      let p = 0;
+      const iv = window.setInterval(() => { p += 12; setPct(Math.min(p, 100)); if (p >= 100) { window.clearInterval(iv); window.setTimeout(onDone, 400); } }, 220);
+    }, 1100);
+  };
+  const steps = [ar ? 'تسجيل الدخول' : 'Sign in', ar ? 'ربط Shopify' : 'Connect Shopify', ar ? 'لوحة التحكم' : 'Dashboard'];
+  return (
+    <AuthShell lang={lang} setLang={setLang} go={go}>
+      <div className="auth-card">
+        <div className="stepper">{steps.map((s, i) => <div key={s} className={`st${i < 1 ? ' done' : ''}${i === 1 ? ' cur' : ''}`}><span>{i < 1 ? '✓' : i + 1}</span>{s}</div>)}</div>
+        <p className="eyebrow">SHOPIFY</p>
+        <h1>{ar ? 'اربط متجر Shopify' : 'Connect your Shopify store'}</h1>
+        <p className="muted">{ar ? 'هنسحب الأوردرات والعملاء والمنتجات تلقائياً، وكل أوردر جديد بيظهر لحظياً.' : 'We sync orders, customers and products automatically, and new orders appear in real time.'}</p>
+        <div className="field"><label>{ar ? 'دومين المتجر' : 'Store domain'}</label><input value={domain} onChange={e => setDomain(e.target.value)} disabled={phase !== 'idle'} /></div>
+        {phase === 'idle' && <button className="btn btn-primary btn-block" onClick={start}><I n="shopify" size={16} />{ar ? 'اربط Shopify' : 'Connect Shopify'}</button>}
+        {phase === 'auth' && <div className="sync-box"><div className="spin" />{ar ? 'بنفتح صلاحيات Shopify...' : 'Authorizing with Shopify...'}</div>}
+        {phase === 'sync' && <div className="sync-box col"><div>{ar ? 'بنسحب الأوردرات والعملاء...' : 'Syncing orders and customers...'}</div><div className="bar-track"><div style={{ width: `${pct}%`, height: '100%', background: 'var(--accent)', borderRadius: 100, transition: 'width .2s' }} /></div></div>}
+        <button className="link-btn" onClick={onDone}>{ar ? 'تخطي دلوقتي' : 'Skip for now'}</button>
+      </div>
+    </AuthShell>
+  );
+}
+
+/* ================= EXTRA PAGES ================= */
+const CUSTOMERS_DEMO = [
+  { n: 'Mariam Adel', p: '+20 100 555 0141', o: 6, v: 3840 },
+  { n: 'Ahmed Samy', p: '+20 111 555 0172', o: 4, v: 2610 },
+  { n: 'Salma Nabil', p: '+20 122 555 0188', o: 3, v: 1950 },
+  { n: 'Karim Fouad', p: '+20 101 555 0123', o: 2, v: 1290 },
+  { n: 'Nour Hassan', p: '+20 109 555 0165', o: 1, v: 640 },
+];
+function PageHead({ title, sub }: { title: string; sub?: string }) {
+  return <div className="page-head"><h1>{title}</h1>{sub && <p className="muted small" style={{ margin: '4px 0 0' }}>{sub}</p>}</div>;
+}
+function SalesPage({ lang }: { lang: Lang }) {
+  const ar = lang === 'ar';
+  const kpis = [[ar ? 'إجمالي المبيعات' : 'Total sales', '184,250 EGP'], [ar ? 'الأوردرات' : 'Orders', '612'], [ar ? 'متوسط الأوردر' : 'Avg. order', '301 EGP'], [ar ? 'مبيعات اليوم' : 'Today', '6,420 EGP']];
+  return (
+    <div>
+      <PageHead title={ar ? 'مبيعات Shopify' : 'Shopify Sales'} sub={ar ? 'أرقام مطابقة تماماً لـ Shopify' : 'Figures matched exactly to Shopify'} />
+      <div className="kpi-grid">{kpis.map(([k, v]) => <div className="card kpi" key={k}><div className="muted small">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
+    </div>
+  );
+}
+function CustomersPage({ lang }: { lang: Lang }) {
+  const ar = lang === 'ar';
+  return (
+    <div>
+      <PageHead title={ar ? 'العملاء' : 'Customers'} sub={ar ? 'بيانات العميل وقيمة أوردراته' : 'Customer details and order value'} />
+      <div className="card"><table className="data"><thead><tr><th>{ar ? 'الاسم' : 'Name'}</th><th>{ar ? 'الموبايل' : 'Phone'}</th><th>{ar ? 'الأوردرات' : 'Orders'}</th><th>{ar ? 'القيمة' : 'Value'}</th></tr></thead>
+        <tbody>{CUSTOMERS_DEMO.map(c => <tr key={c.n}><td>{c.n}</td><td className="mono">{c.p}</td><td>{c.o}</td><td>{c.v.toLocaleString()} EGP</td></tr>)}</tbody></table></div>
+    </div>
+  );
+}
+function CartsPage({ lang, showToast }: { lang: Lang; showToast: (m: string) => void }) {
+  const ar = lang === 'ar';
+  const rows = [['Mariam Adel', 'Oversized hoodie', 890, 'sent'], ['Karim Fouad', 'White sneakers', 1250, 'pending'], ['Salma Nabil', 'Denim jacket', 1490, 'recovered']];
+  return (
+    <div>
+      <PageHead title={ar ? 'السلات المتروكة' : 'Abandoned Carts'} sub={ar ? 'تذكير واتساب أوتوماتيك يرجّع العميل' : 'Automatic WhatsApp reminders bring customers back'} />
+      <div className="card"><table className="data"><thead><tr><th>{ar ? 'العميل' : 'Customer'}</th><th>{ar ? 'المنتج' : 'Item'}</th><th>{ar ? 'القيمة' : 'Value'}</th><th>{ar ? 'الحالة' : 'Status'}</th><th /></tr></thead>
+        <tbody>{rows.map(r => <tr key={String(r[0])}><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]} EGP</td><td><span className={`chip ${r[3] === 'recovered' ? 'green' : r[3] === 'sent' ? 'blue' : 'grey'}`}>{r[3]}</span></td><td><button className="btn btn-ghost btn-sm" onClick={() => showToast(ar ? 'اتبعت تذكير واتساب' : 'WhatsApp reminder sent')}>{ar ? 'ابعت تذكير' : 'Send reminder'}</button></td></tr>)}</tbody></table></div>
+    </div>
+  );
+}
+function BillingPage({ lang }: { lang: Lang }) {
+  const ar = lang === 'ar';
+  return (
+    <div>
+      <PageHead title={ar ? 'الباقة والفواتير' : 'Plan & Billing'} />
+      <div className="price-grid">{PLANS.map(p => (
+        <div key={p.name.en} className={`price-card${p.popular ? ' popular' : ''}`}>
+          <h3>{p.name[lang]}</h3><div className="price">{p.price} <span className="muted small">EGP{ar ? ' / شهر' : ' / mo'}</span></div>
+          <ul>{p.features[lang].map((f: string) => <li key={f}>{f}</li>)}</ul>
+        </div>))}</div>
     </div>
   );
 }

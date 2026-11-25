@@ -63,7 +63,7 @@ export const ORDERS: Order[] = [
 export interface Conversation {
   id: string;
   name: string;
-  channel: 'whatsapp' | 'instagram' | 'messenger' | 'tiktok';
+  channel: 'whatsapp' | 'instagram' | 'messenger';
   last: string;
   time: string;
   unread: number;
@@ -96,7 +96,7 @@ export const CHATS: Conversation[] = [
     ],
   },
   {
-    id: 'c4', name: 'nour_hassan', channel: 'tiktok', last: 'سعر الجاكيت كام؟', time: 'أمس', unread: 3,
+    id: 'c4', name: 'nour_hassan', channel: 'instagram', last: 'سعر الجاكيت كام؟', time: 'أمس', unread: 3,
     messages: [
       { from: 'customer', text: 'سعر الجاكيت كام؟', time: 'أمس 22:14' },
       { from: 'customer', text: '؟؟', time: 'أمس 22:40' },
@@ -256,8 +256,8 @@ export const LANDING_FEATURES = [
   {
     title: { en: 'Unified inbox', ar: 'صندوق محادثات موحد' },
     desc: {
-      en: 'WhatsApp, Instagram, Messenger and TikTok messages in one screen, assigned to your team.',
-      ar: 'رسايل واتساب وإنستجرام وماسنجر وتيك توك في شاشة واحدة، متوزعة على فريقك.',
+      en: 'WhatsApp, Instagram and Messenger messages in one screen, assigned to your team.',
+      ar: 'رسايل واتساب وإنستجرام وماسنجر في شاشة واحدة، متوزعة على فريقك.',
     },
     icon: 'inbox',
   },
