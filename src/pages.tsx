@@ -99,8 +99,6 @@ export function DashboardPage({ lang, showToast, go }: P) {
           {stat.map(([k, v, c]) => <div className="brk-row" key={k}><span className={`dot d-${c}`} /><span className="grow">{k}</span><b>{v}</b></div>)}</div></div>
       </div>
       <div className="dash-cols">
-        <div className="card card-pad"><div className="row-between"><h3 className="h3">Latest orders</h3><button className="btn btn-ghost btn-sm" onClick={() => go('orders')}>View all</button></div>
-          <div className="mini-list">{recent.map(o => <div key={o.id} className="mini-row"><b>#{o.id}</b><span className="grow">{o.name}</span><span className="muted small">{o.status}</span><b>{fmtMoney(o.total)}</b></div>)}{recent.length === 0 && <p className="muted small">No orders in this range.</p>}</div></div>
         <div className="card card-pad"><div className="row-between"><h3 className="h3">Top products</h3><div className="seg"><button className={mode === 'revenue' ? 'on' : ''} onClick={() => setMode('revenue')}>Revenue</button><button className={mode === 'quantity' ? 'on' : ''} onClick={() => setMode('quantity')}>Quantity</button></div></div>
           <div className="mini-list">{top.map(p => <div key={p.name} className="top-row"><div className="row-between"><span>{p.name}</span><b>{mode === 'revenue' ? fmtMoney(p.value) : p.qty}</b></div><div className="bar"><i className="d-blue" style={{ width: `${((mode === 'revenue' ? p.value : p.qty) / topMax) * 100}%` }} /></div></div>)}</div></div>
       </div>
