@@ -13,6 +13,7 @@ import {
 /* ---------- icons ---------- */
 const paths: Record<string, string> = {
   overview: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z',
+  doc: 'M6 2h8l6 6v14H6V2zm7 1.5V9h5.5L13 3.5zM8 13h8v1.5H8V13zm0 3.5h8V18H8v-1.5z',
   orders: 'M7 4V2h10v2h5v16H2V4h5zm2 0h6V3.5H9V4zM4 8v10h16V8H4z',
   chats: 'M4 2h16a2 2 0 012 2v12a2 2 0 01-2 2H8l-6 4V4a2 2 0 012-2z',
   automations: 'M12 2a7 7 0 017 7c0 2.4-1.2 4.2-2.6 5.7-.9 1-1.4 1.6-1.4 2.3h-6c0-.7-.5-1.3-1.4-2.3C6.2 13.2 5 11.4 5 9a7 7 0 017-7zM9 19h6v1a2 2 0 01-2 2h-2a2 2 0 01-2-2v-1z',

@@ -614,12 +614,25 @@ function SettingsPanel({ name }: { name: string }) {
 }
 
 /* ---------------- Products report ---------------- */
-const PRODUCTS: [string, number, number, number][] = [
-  ['Classic cotton tee - Black', 142, 131, 249], ['Knit cardigan - Beige', 96, 90, 640], ['Denim jacket - Washed blue', 88, 84, 650], ['Oversized hoodie - Grey', 120, 112, 519],
-  ['White sneakers - Size 42', 64, 61, 1250], ['Linen shirt - Sand', 77, 70, 420], ['Canvas tote bag', 58, 52, 180], ['Leather belt - Brown', 41, 39, 330],
-  ['Summer scarf - Floral', 36, 33, 210], ['Wool beanie - Navy', 29, 27, 150], ['Sport socks (3 pack)', 112, 104, 95], ['Phone case - Clear', 85, 80, 120],
+const BASES: [string, number][] = [
+  ['Classic cotton tee', 249], ['Knit cardigan', 640], ['Denim jacket', 650], ['Oversized hoodie', 519], ['White sneakers', 1250], ['Linen shirt', 420], ['Canvas tote bag', 180], ['Leather belt', 330],
+  ['Summer scarf', 210], ['Wool beanie', 150], ['Sport socks (3 pack)', 95], ['Phone case', 120], ['Satin evening gown - One Size (Fits 65-85 kg)', 699], ['Maxi dress - One Size (55-80 kg)', 689],
+  ['بوكس الهدية', 2500], ['بوكس الشتاء', 1599], ['فستان سهرة', 899], ['عباية كاجوال', 749], ['طرحة قطن', 130], ['حقيبة يد', 560], ['شنطة ظهر', 430], ['كوب حراري', 220],
 ];
-const HUES = [200, 28, 340, 160, 260, 45, 190, 12, 300, 100, 220, 70];
+const VARS = ['Black', 'Beige', 'Navy', 'Sand', 'Grey'], VARS_AR = ['أسود', 'بيج', 'كحلي', 'رملي', 'رمادي'];
+const PRODUCTS: [string, number, number, number][] = (() => {
+  const out: [string, number, number, number][] = []; let k = 0;
+  for (let v = 0; v < 12 && out.length < 103; v++) BASES.forEach(([b, price], i) => {
+    if (out.length >= 103 || (v > 0 && (i + v) % 4 === 0)) return;
+    const ar = /[\u0600-\u06FF]/.test(b); k++;
+    const qty = Math.max(4, Math.round((120 - i * 4 - v * 17) * (1 + ((k * 7) % 5) / 10)));
+    out.push([`${b} - ${ar ? VARS_AR[v % 5] : VARS[v % 5]}`, qty, Math.max(2, qty - 1 - (k % 6)), price + (k % 4) * 0]);
+  });
+  const ar = out.filter(x => /[\u0600-\u06FF]/.test(x[0])), en = out.filter(x => !/[\u0600-\u06FF]/.test(x[0])), mix: typeof out = [];
+  en.forEach((x, i) => { if (i % 3 === 0 && ar.length) mix.push(ar.shift()!); mix.push(x); });
+  return mix.concat(ar).sort((a, b) => b[1] * b[3] - a[1] * a[3]);
+})();
+const HUES = Array.from({ length: 103 }, (_, i) => (i * 47 + 200) % 360);
 export function ProductsPage({ lang, showToast }: P) {
   const [mode, setMode] = useState<'Single Search' | 'Multi Search'>('Single Search');
   const [q, setQ] = useState('');
@@ -628,7 +641,7 @@ export function ProductsPage({ lang, showToast }: P) {
   const [to, setTo] = useState('');
   const terms = mode === 'Multi Search' ? q.split(',').map(x => x.trim().toLowerCase()).filter(Boolean) : q.trim() ? [q.trim().toLowerCase()] : [];
   const nf = from ? parseInt(from, 10) : 0, nt = to ? parseInt(to, 10) : 1e9;
-  let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i], lo: 12400 + i * 9, hi: 12539 - i * 4 })).filter(x => (!terms.length || terms.some(t => x.n.toLowerCase().includes(t))) && (isNaN(nf) || nf <= x.hi) && (isNaN(nt) || nt >= x.lo));
+  let list = PRODUCTS.map((x, i) => ({ n: x[0], qty: x[1], ord: x[2], unit: x[3], v: x[1] * x[3], hue: HUES[i], lo: 12400 + (i * 9) % 90, hi: 12539 - (i * 4) % 60 })).filter(x => (!terms.length || terms.some(t => x.n.toLowerCase().includes(t))) && (isNaN(nf) || nf <= x.hi) && (isNaN(nt) || nt >= x.lo));
   if (sort === 'A to Z') list = [...list].sort((a, b) => a.n.localeCompare(b.n));
   if (sort === 'Z to A') list = [...list].sort((a, b) => b.n.localeCompare(a.n));
   const clear = () => { setQ(''); setSort('No alphabetical sort'); setFrom(''); setTo(''); };
@@ -640,19 +653,19 @@ export function ProductsPage({ lang, showToast }: P) {
           <div className="seg">{(['Single Search', 'Multi Search'] as const).map(m => <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{tr(lang, m, m === 'Single Search' ? 'بحث واحد' : 'بحث متعدد')}</button>)}</div>
           <input className="inp" placeholder={mode === 'Single Search' ? 'Search products by name...' : 'Search several products, separated by commas'} value={q} onChange={e => setQ(e.target.value)} />
         </div>
-        <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo, no real file)')}><I n="orders" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
+        <button className="btn btn-primary prod-export" onClick={() => showToast('Exported filtered products (demo, no real file)')}><I n="doc" size={16} />{tr(lang, 'Export filtered', 'تصدير المفلتر')}</button>
       </div>
       <div className="card prod-filters">
         <select className="inp" value={sort} onChange={e => setSort(e.target.value)}>{['No alphabetical sort', 'A to Z', 'Z to A'].map(x => <option key={x}>{x}</option>)}</select>
         <input className="inp" placeholder="Order number from" value={from} onChange={e => setFrom(e.target.value)} />
         <input className="inp" placeholder="Order number to" value={to} onChange={e => setTo(e.target.value)} />
         <button className="btn btn-ghost" onClick={clear}>{tr(lang, 'Clear filters', 'مسح الفلاتر')}</button>
-        <button className="btn btn-primary" onClick={() => showToast('Product report ready (demo)')}>{tr(lang, 'Product report', 'تقرير المنتجات')}</button>
+        <button className="btn btn-primary" onClick={() => showToast('Product report ready (demo)')}><I n="doc" size={16} />{tr(lang, 'Product report', 'تقرير المنتجات')}</button>
       </div>
       <div className="kpi-grid prod-kpi">{[['Requested products', String(list.length)], ['Total requested quantity', String(list.reduce((s, x) => s + x.qty, 0))], ['Products value', f(list.reduce((s, x) => s + x.v, 0))]].map(([k, v]) => <div className="card kpi" key={k}><div className="small k-t">{k}</div><div className="kpi-v">{v}</div></div>)}</div>
       <div className="card prod-table">
         <div className="prod-row head"><span>Product</span><span /><span>Quantity</span><span>Orders</span><span>Value</span><span>Unit price</span></div>
-        {list.map(x => <div className="prod-row" key={x.n}><b className="pn">{x.n}</b><span className="pimg" style={{ background: `linear-gradient(135deg, hsl(${x.hue} 70% 80%), hsl(${x.hue} 60% 60%))` }} /><span data-l="Quantity">{x.qty}</span><span data-l="Orders">{x.ord}</span><b data-l="Value">{f(x.v)}</b><span className="muted" data-l="Unit price">{f(x.unit)}</span></div>)}
+        {list.map(x => <div className="prod-row" key={x.n}><b className="pn">{x.n}</b><span className="pimg" style={{ background: `linear-gradient(160deg, hsl(${x.hue} 45% 78%), hsl(${x.hue} 40% 38%))` }}><i /></span><span data-l="Quantity">{x.qty}</span><span data-l="Orders">{x.ord}</span><b data-l="Value">{f(x.v)}</b><span className="muted" data-l="Unit price">{f(x.unit)}</span></div>)}
         {list.length === 0 && <div className="muted" style={{ padding: 20 }}>No products match.</div>}
       </div>
     </div>
