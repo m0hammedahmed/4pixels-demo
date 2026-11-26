@@ -919,7 +919,7 @@ function AuthPage({ lang, setLang, go, onDone }: { mode: string; lang: Lang; set
           <p className="eyebrow">{ar ? 'لمتاجر Shopify' : 'FOR SHOPIFY STORES'}</p>
           <h2>{ar ? 'كل عملائك وأوردراتك ورسايل واتساب في مكان واحد' : 'Every customer, order and WhatsApp chat in one place'}</h2>
           <ul>{pts.map(p => <li key={p[0]}><span className="tick"><I n="check" size={14} /></span><div><b>{ar ? p[1] : p[0]}</b><span>{ar ? p[3] : p[2]}</span></div></li>)}</ul>
-          <div className="auth-mini"><div><b>5 {ar ? 'دقايق' : 'min'}</b><span>{ar ? 'للإعداد' : 'to set up'}</span></div><div><b>{ar ? '7 أيام' : '7 days'}</b><span>{ar ? 'تجربة مجانية' : 'free trial'}</span></div><div><b>{ar ? 'بدون' : 'No'}</b><span>{ar ? 'كارت بنكي' : 'card needed'}</span></div></div>
+          <div className="auth-mini"><div><b>{ar ? 'ربط' : 'Connect'}</b><span>{ar ? 'Shopify وواتساب' : 'Shopify + WhatsApp'}</span></div><div><b>{ar ? 'تجربة' : 'Free'}</b><span>{ar ? 'مجانية' : 'trial'}</span></div><div><b>{ar ? 'عربي' : 'Arabic'}</b><span>{ar ? 'وإنجليزي' : 'and English'}</span></div></div>
         </div>
         <div className="auth-card">
           <div className="seg">

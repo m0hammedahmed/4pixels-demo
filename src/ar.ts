@@ -33,7 +33,7 @@ const P: [RegExp, (m: RegExpMatchArray) => string][] = [
 ];
 
 Object.assign(D, {
-'5-day full-access trial':'تجربة كاملة 5 أيام','Shopify + WhatsApp':'Shopify + واتساب','Arabic-first':'عربي أولاً',
+'Free trial':'تجربة مجانية','Shopify + WhatsApp':'Shopify + واتساب','Arabic-first':'عربي أولاً',
 'Your order is confirmed.':'تم تأكيد طلبك.','When will it arrive?':'هيوصل امتى؟','Delivery is scheduled for tomorrow.':'التوصيل بكره.','Campaign ready':'الحملة جاهزة',
 'Easy Order':'إيزي أوردر',
 'Orders, customers, products, and storefront activity stay connected.':'الأوردرات والعملاء والمنتجات ونشاط المتجر مربوطين ببعض.',
@@ -70,9 +70,10 @@ Object.assign(D, {
 'An Arabic-first store for smart home-organization products with clear category navigation.':'متجر عربي أولاً لمنتجات تنظيم المنزل الذكية مع تصنيفات واضحة.',
 'A high-converting gaming store for consoles, games, controllers, and accessories.':'متجر ألعاب عالي التحويل للأجهزة والألعاب وأذرع التحكم والإكسسوارات.',
 'An elegant home décor storefront for rugs, mats, curtains, and home-textile collections.':'متجر ديكور منزلي أنيق للسجاد والموكيت والستائر والمفروشات.',
+'Every channel has a clear job, while 4Pixels keeps the order, customer, and next action visible to the team.':'كل قناة ليها دور واضح، و4Pixels بيخلّي الأوردر والعميل والخطوة الجاية ظاهرين للفريق.',
 'Exact Shopify sales':'مبيعات Shopify الدقيقة',
 'Instead of orders getting lost between WhatsApp and Shopify, everything is clear and we can see exactly who needs a reply.':'بدل ما الأوردرات تضيع بين واتساب وShopify، كل حاجة بقت واضحة وعارفين مين محتاج رد.',
-'Having the chat and the order in one place is the biggest relief. The team replies faster.':'وجود المحادثة والأوردر في مكان واحد أكبر راحة. الفريق بيرد أسرع.',
+'Having the chat and the order in one place is the biggest relief. Everything is easier to follow.':'وجود المحادثة والأوردر في مكان واحد أكبر راحة. كل حاجة أسهل في المتابعة.',
 'We used to review every order manually. Now the system shows the status and what follow-up is needed.':'كنا بنراجع كل أوردر يدوي. دلوقتي السيستم بيعرض الحالة والمتابعة المطلوبة.',
 'Abandoned carts finally make sense. We know who came back and who needs a message.':'السلات المتروكة بقت مفهومة. عارفين مين رجع ومين محتاج رسالة.',
 'Tetiano Site':'موقع تيتيانو','Moon Site':'موقع مون','Erwana Site':'موقع إروانا','N.S Home Organization':'إن.إس لتنظيم المنزل','Tharaa Gaming Store':'متجر ثراء للألعاب','Lamsa Home & Textiles':'لمسة للمفروشات والمنزل',

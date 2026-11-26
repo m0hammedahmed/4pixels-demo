@@ -57,7 +57,7 @@ export const STR: Record<string, { en: string; ar: string }> = {
 
   // Topbar
   'top.search': { en: 'Search orders, customers, chats...', ar: 'دور على أوردر أو عميل أو محادثة...' },
-  'top.trial': { en: 'Trial: 5 days left', ar: 'التجربة: باقي 5 أيام' },
+  'top.trial': { en: 'Free trial', ar: 'تجربة مجانية' },
   'top.upgrade': { en: 'Upgrade', ar: 'ترقية' },
 
   // Dashboard
