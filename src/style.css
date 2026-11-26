@@ -1018,3 +1018,5 @@ table.data tbody tr:hover { background: #f1f5f9; }
 /* v25e solid header */
 .pub-head { background: #ffffff !important; background-image: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; border-bottom: 1px solid #e2e8f0 !important; box-shadow: 0 1px 8px rgba(15,23,42,.05) !important; z-index: 50 !important; }
 .pub-actions .btn { box-shadow: none !important; }
+/* v25f pricing toggle blue */
+.pub .seg.center button.on { background: #0284c7 !important; color: #fff !important; box-shadow: none !important; }
