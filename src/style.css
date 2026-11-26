@@ -1006,3 +1006,11 @@ table.data tbody tr:hover { background: #f1f5f9; }
   .pw-plan.cur { order: -1; }
 }
 @media (max-width: 768px) { .ph-in { flex-wrap: wrap; padding: 10px 16px; } .pub-nav.open { width: 100%; order: 5; } }
+
+/* v25 header final */
+.pub-nav { background: transparent !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important; backdrop-filter: none !important; }
+.pub-nav button { padding: 8px 13px !important; font-weight: 500 !important; color: var(--muted) !important; border-radius: 8px !important; box-shadow: none !important; white-space: nowrap; }
+.pub-nav button:hover { background: #f0f9ff !important; color: var(--accent) !important; }
+.pub-nav button.on, .pub-nav button.on:hover { background: #e0f2fe !important; color: #0369a1 !important; box-shadow: none !important; }
+.pub-head .brand, .pub-head .brand small { white-space: nowrap; }
+@media (max-width: 768px) { .pub-nav.open button { border-radius: 8px !important; } }
