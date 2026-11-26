@@ -121,8 +121,8 @@ function Home({ lang, go }: { lang: Lang; go: (p: string) => void }) {
   );
 }
 
-function CTA({ lang, go }: { lang: Lang; go: (p: string) => void }) {
-  return <section className="pw-cta-wrap"><div className="pw-cta"><h2>{tr(lang, 'Ready to see your store in one workspace?', 'جاهز تشوف متجرك في مساحة عمل واحدة؟')}</h2><p>{tr(lang, 'Connect Shopify and WhatsApp and start your free trial today.', 'اربط Shopify وواتساب وابدأ تجربتك المجانية النهارده.')}</p><div className="btn-row"><button className="btn pw-cta-btn" onClick={() => go('login')}>{tr(lang, 'Start free trial', 'ابدأ التجربة المجانية')}</button><button className="btn pw-cta-ghost" onClick={() => go('contact')}>{tr(lang, 'Talk to us', 'كلمنا')}</button></div></div></section>;
+function CTA(_p: { lang: Lang; go: (p: string) => void }) {
+  return null;
 }
 
 function PageHero({ lang, eye, h1, arH1, lead, arLead }: { lang: Lang; eye: string; h1: string; arH1: string; lead?: string; arLead?: string }) {
