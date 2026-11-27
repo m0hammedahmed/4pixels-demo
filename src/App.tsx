@@ -77,7 +77,7 @@ export default function App() {
   const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
   const [notifOpen, setNotifOpen] = useState(false);
 
-  const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact'];
+  const PUB = ['home', 'about', 'features', 'pricing', 'projects', 'contact', 'case'];
   const [connected, setConnected] = useState(initial !== 'home' && !PUB.includes(initial) && initial !== 'login' && initial !== 'connect');
   useEffect(() => startArabic(lang === 'ar'), [lang]);
   useEffect(() => { const names: Record<string, string> = { home: 'Home', about: 'About', features: 'Features', pricing: 'Pricing', projects: 'Projects', contact: 'Contact', login: 'Sign in', connect: 'Connect your store', dashboard: 'Dashboard', overview: 'Dashboard', orders: 'Orders', chats: 'Chat', sales: 'Shopify Sales', customers: 'Customers', products: 'Products report', carts: 'Abandoned Carts', templates: 'Marketing', sms: 'SMS', automations: 'Smart Offers', retention: 'Retention', loyalty: 'Loyalty & Rewards', billing: 'Plan & Billing', settings: 'Settings' }; document.title = (names[page] || 'Page not found') + ' | 4Pixels'; }, [page]);

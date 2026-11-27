@@ -32,8 +32,9 @@ export function PublicSite({ lang, setLang, go, page }: Props) {
         {page === 'about' && <About lang={lang} go={nav} />}
         {page === 'features' && <Features lang={lang} go={nav} />}
         {page === 'pricing' && <Pricing lang={lang} go={nav} />}
-        {page === 'projects' && <Projects lang={lang} />}
+        {page === 'projects' && <Projects lang={lang} go={nav} />}
         {page === 'contact' && <Contact lang={lang} />}
+        {page === 'case' && <CaseStudy lang={lang} go={nav} />}
       </main>
       <footer className="pub-foot">
         <div className="foot-grid">
@@ -155,6 +156,7 @@ function Features({ lang, go }: { lang: Lang; go: (p: string) => void }) {
   return (<>
     <PageHero lang={lang} eye={tr(lang, 'Features', 'المميزات')} h1="Everything your store operation needs." arH1="كل اللي عمليات متجرك محتاجاه." lead="From the first customer message to delivery, returns and repeat purchases." arLead="من أول رسالة من العميل لحد التسليم والمرتجعات وتكرار الشراء." />
     <section className="pw-sec"><div className="pw-grid3">{FEATURES.map(([t, d, ic, art, ard]) => <div className="pw-card" key={t}><span className="pw-ic"><I n={ic} size={20} /></span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p></div>)}</div></section>
+    <Showcase lang={lang} />
     <section className="pw-sec pw-alt"><div className="pw-sec-head"><h2>{tr(lang, 'And the details that make daily work easier.', 'والتفاصيل اللي بتسهّل الشغل اليومي.')}</h2></div>
       <div className="pw-grid4 pw-tiles">{MORE.map(([en, ar]) => <div className="pw-tile" key={en}><span className="tick"><I n="check" size={12} /></span>{tr(lang, en, ar)}</div>)}</div></section>
     <CTA lang={lang} go={go} /></>);
@@ -201,10 +203,10 @@ function StoreMock({ c, name }: { c: string; name: string }) {
   );
 }
 
-function Projects({ lang }: { lang: Lang }) {
+function Projects({ lang, go }: { lang: Lang; go: (p: string) => void }) {
   return (<>
     <PageHero lang={lang} eye={tr(lang, 'Projects', 'المشاريع')} h1="Selected websites, systems and commerce builds." arH1="مواقع وأنظمة ومتاجر مختارة من شغلنا." lead="A clear view of the work, the product type, and the final result." arLead="نظرة واضحة على الشغل ونوع المنتج والنتيجة النهائية." />
-    <section className="pw-sec"><div className="pw-grid3 pw-projs">{PROJECTS.map(([t, d, c, ard]) => <div className="pw-proj" key={t}><StoreMock c={c} name={t} /><div className="pw-proj-body"><h3>{t}</h3><span className="chip blue">Shopify</span><p>{tr(lang, d, ard)}</p></div></div>)}</div></section></>);
+    <section className="pw-sec"><div className="pw-grid3 pw-projs">{PROJECTS.map(([t, d, c, ard]) => <div className="pw-proj" key={t}><StoreMock c={c} name={t} /><div className="pw-proj-body"><h3>{t}</h3><span className="chip blue">Shopify</span><p>{tr(lang, d, ard)}</p></div></div>)}</div><div className="pw-casebar"><div><b>{tr(lang, 'Sample case study', 'دراسة حالة تجريبية')}</b><p>{tr(lang, 'See how a store team could work in 4Pixels, with illustrative data.', 'شوف إزاي فريق متجر ممكن يشتغل في 4Pixels، ببيانات توضيحية.')}</p></div><button className="btn btn-primary" onClick={() => go('case')}>{tr(lang, 'Read the case study', 'اقرأ دراسة الحالة')}</button></div></section></>);
 }
 
 function Contact({ lang }: { lang: Lang }) {
@@ -225,4 +227,46 @@ function Contact({ lang }: { lang: Lang }) {
         <h3>{tr(lang, 'Location', 'المكان')}</h3><p>{tr(lang, 'Cairo, Egypt', 'القاهرة، مصر')}</p>
       </div>
     </div></section></>);
+}
+
+
+function ShotInbox({ lang }: { lang: Lang }) {
+  const rows: [string, string, string, string][] = [['S', 'Sara M.', tr(lang, 'Is my order confirmed?', 'الأوردر اتأكد؟'), '2m'], ['A', 'Ahmed S.', tr(lang, 'Can I change the size?', 'أقدر أغير المقاس؟'), '6m'], ['M', 'Menna K.', tr(lang, 'Thank you!', 'شكراً!'), '14m']];
+  return <div className="sh"><div className="sh-bar"><i /><i /><i /><span>{tr(lang, 'Inbox', 'الإنبوكس')}</span></div><div className="sh-split"><div className="sh-list">{rows.map(([a, n, m, t], i) => <div key={n} className={`sh-row${i === 0 ? ' on' : ''}`}><span className="pw-av sm">{a}</span><div><b>{n}</b><small>{m}</small></div><em>{t}</em></div>)}</div><div className="sh-chat"><p className="b in">{tr(lang, 'Is my order confirmed?', 'الأوردر اتأكد؟')}</p><p className="b out">{tr(lang, 'Yes, it ships tomorrow.', 'أيوه، هيتشحن بكرة.')}</p><div className="sh-ord"><b>#1042</b><span className="chip blue">{tr(lang, 'Confirmed', 'مؤكد')}</span></div></div></div></div>;
+}
+function ShotOrders({ lang }: { lang: Lang }) {
+  const rows: [string, string, string][] = [['#1042', tr(lang, 'Confirmed', 'مؤكد'), 'blue'], ['#1041', tr(lang, 'Out for delivery', 'خرج للتوصيل'), 'amber'], ['#1040', tr(lang, 'Delivered', 'تم التسليم'), 'green'], ['#1039', tr(lang, 'Return requested', 'طلب مرتجع'), 'red']];
+  return <div className="sh"><div className="sh-bar"><i /><i /><i /><span>{tr(lang, 'Orders', 'الأوردرات')}</span></div><div className="sh-table">{rows.map(([id, st, c]) => <div key={id} className="sh-tr"><b>{id}</b><span className="sh-line" /><span className={`sh-st ${c}`}>{st}</span></div>)}</div></div>;
+}
+function ShotCart({ lang }: { lang: Lang }) {
+  const steps: [string, string][] = [[tr(lang, 'Checkout left open', 'السلة اتساب'), '0h'], [tr(lang, 'Reminder sent on WhatsApp', 'تذكير على واتساب'), '1h'], [tr(lang, 'Customer returned', 'العميل رجع'), '3h'], [tr(lang, 'Order placed', 'الأوردر اتعمل'), '3h']];
+  return <div className="sh"><div className="sh-bar"><i /><i /><i /><span>{tr(lang, 'Cart recovery', 'استرجاع السلات')}</span></div><div className="sh-flow">{steps.map(([t, h], i) => <div key={t} className="sh-step"><span className={`sh-dot${i === 3 ? ' ok' : ''}`}>{i === 3 ? '\u2713' : i + 1}</span><b>{t}</b><em>{h}</em></div>)}</div></div>;
+}
+function ShotStats({ lang }: { lang: Lang }) {
+  const bars = [30, 52, 41, 66, 58, 80, 72, 94];
+  return <div className="sh"><div className="sh-bar"><i /><i /><i /><span>{tr(lang, 'Analytics', 'التحليلات')}</span></div><div className="sh-kpis">{[[tr(lang, 'Sales', 'المبيعات'), '48.2K'], [tr(lang, 'Confirmed', 'مؤكد'), '91%'], [tr(lang, 'Returns', 'مرتجعات'), '4%']].map(([k, v]) => <div key={k}><b>{v}</b><small>{k}</small></div>)}</div><div className="aw-bars sh-bars">{bars.map((h, i) => <span key={i} style={{ height: h + '%' }} />)}</div></div>;
+}
+function Showcase({ lang }: { lang: Lang }) {
+  const items: [string, string, string, string, string, React.ReactNode][] = [
+    ['Team inbox', 'Every WhatsApp conversation next to the customer\u2019s order, so replies never start from zero.', 'inbox', 'إنبوكس الفريق', 'كل محادثة واتساب جنب أوردر العميل، فالرد مبيبدأش من الصفر.', <ShotInbox lang={lang} />],
+    ['Order tracking', 'Confirmation, delivery and returns visible in one list with clear statuses.', 'orders', 'تتبع الأوردرات', 'التأكيد والتسليم والمرتجعات في قائمة واحدة بحالات واضحة.', <ShotOrders lang={lang} />],
+    ['Cart recovery', 'Timed WhatsApp reminders bring unfinished checkouts back.', 'cart', 'استرجاع السلات', 'تذكيرات واتساب مجدولة بترجّع الطلبات اللي ماكملتش.', <ShotCart lang={lang} />],
+    ['Clear analytics', 'Sales, confirmation and returns in one view your team can read at a glance.', 'profit', 'تحليلات واضحة', 'المبيعات والتأكيد والمرتجعات في شاشة واحدة تتقرا بسرعة.', <ShotStats lang={lang} />],
+  ];
+  return <section className="pw-sec"><div className="pw-sec-head"><Eyebrow>{tr(lang, 'Inside the product', 'جوه المنتج')}</Eyebrow><h2>{tr(lang, 'See each part at work.', 'شوف كل جزء وهو شغال.')}</h2><p>{tr(lang, 'Illustrative screens with sample data.', 'شاشات توضيحية ببيانات تجريبية.')}</p></div>
+    <div className="pw-show">{items.map(([t, d, ic, art, ard, shot], i) => <div className={`pw-show-row${i % 2 ? ' rev' : ''}`} key={t}><div className="pw-show-txt"><span className="pw-ic"><I n={ic} size={20} /></span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p></div><div className="pw-show-shot">{shot}</div></div>)}</div></section>;
+}
+
+function CaseStudy({ lang, go }: { lang: Lang; go: (p: string) => void }) {
+  const steps: [string, string, string, string][] = [
+    ['Before', 'Orders and chats lived in separate tools, and the team chased statuses by hand.', 'قبل', 'الأوردرات والمحادثات في أدوات منفصلة، والفريق بيطارد الحالات يدوي.'],
+    ['Setup', 'Shopify and WhatsApp were connected, and message templates were prepared.', 'الإعداد', 'اتربط Shopify وواتساب واتجهزت قوالب الرسايل.'],
+    ['After', 'One inbox shows the customer, the order and the next action.', 'بعد', 'إنبوكس واحد بيوضح العميل والأوردر والخطوة الجاية.'],
+  ];
+  return (<>
+    <PageHero lang={lang} eye={tr(lang, 'Sample case study', 'دراسة حالة تجريبية')} h1="How a fashion store team could run on 4Pixels." arH1="إزاي فريق متجر أزياء ممكن يشتغل على 4Pixels." lead="An illustrative example with sample data, not a real customer result." arLead="مثال توضيحي ببيانات تجريبية، مش نتيجة عميل حقيقي." />
+    <section className="pw-sec"><div className="pw-case-meta">{[[tr(lang, 'Store type', 'نوع المتجر'), tr(lang, 'Fashion, Shopify', 'أزياء، Shopify')], [tr(lang, 'Team', 'الفريق'), tr(lang, '4 people', '4 أشخاص')], [tr(lang, 'Channels', 'القنوات'), tr(lang, 'WhatsApp + Shopify', 'واتساب + Shopify')]].map(([k, v]) => <div key={k}><small>{k}</small><b>{v}</b></div>)}</div>
+      <div className="pw-case-steps">{steps.map(([t, d, art, ard], i) => <div className="pw-card" key={t}><span className="pw-num">0{i + 1}</span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p></div>)}</div></section>
+    <section className="pw-sec pw-alt"><div className="pw-sec-head"><h2>{tr(lang, 'What the team sees', 'اللي الفريق بيشوفه')}</h2><p>{tr(lang, 'Sample data for illustration.', 'بيانات تجريبية للتوضيح.')}</p></div><div className="pw-case-shots"><ShotInbox lang={lang} /><ShotCart lang={lang} /></div>
+      <div className="pw-case-cta"><button className="btn btn-primary btn-lg" onClick={() => go('login')}>{tr(lang, 'Start free trial', 'ابدأ التجربة المجانية')}</button><button className="btn btn-ghost btn-lg" onClick={() => go('projects')}>{tr(lang, 'Back to projects', 'رجوع للمشاريع')}</button></div></section></>);
 }
