@@ -1067,3 +1067,6 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .pub-actions .lang-btn { height: 38px; padding: 0 14px !important; }
 @media (max-width: 1100px) { .pub-nav button { padding: 8px 11px !important; } .pub-head .ph-in { padding: 0 20px !important; gap: 12px; } }
 @media (max-width: 900px) { .pub-head .ph-in { display: flex !important; height: 64px !important; justify-content: space-between; } }
+/* v27b full-width header */
+.pub-head { display: block !important; grid-template-columns: none !important; width: 100% !important; }
+.pub-head .ph-in { max-width: 1440px !important; box-sizing: border-box; }
