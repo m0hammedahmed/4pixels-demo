@@ -96,7 +96,7 @@ function Home({ lang, go }: { lang: Lang; go: (p: string) => void }) {
             <div className="btn-row"><button className="btn btn-primary btn-lg" onClick={() => go('login')}>{tr(lang, 'Start free trial', 'ابدأ التجربة المجانية')}</button><button className="btn btn-ghost btn-lg" onClick={() => go('login')}>{tr(lang, 'See the live demo', 'شوف الديمو المباشر')}</button></div>
             <div className="pw-trust"><span>{tr(lang, 'Free trial', 'تجربة مجانية')}</span><span>Shopify + WhatsApp</span><span>{tr(lang, 'Arabic & English', 'عربي وإنجليزي')}</span></div>
           </div>
-          <AppMock lang={lang} />
+          <div className="pw-mockwrap"><AppMock lang={lang} /><div className="pw-float f1"><span className="pw-fdot" /><div><b>{tr(lang, 'New order #1042', 'أوردر جديد #1042')}</b><small>{tr(lang, 'Confirmed on WhatsApp', 'اتأكد على واتساب')}</small></div></div><div className="pw-float f2"><span className="pw-fdot b" /><div><b>{tr(lang, 'Cart recovered', 'سلة اتسترجعت')}</b><small>{tr(lang, 'Sample data', 'بيانات تجريبية')}</small></div></div></div>
         </div>
       </section>
       <section className="pw-logos"><p>{tr(lang, 'Stores & websites built by the 4Pixels team', 'متاجر ومواقع من تنفيذ فريق 4Pixels')}</p><div>{['TETIANO', 'MOON', 'ERWANA', 'N.S HOME', 'THARAA', 'LAMSA'].map(n => <span key={n}>{n}</span>)}</div></section>

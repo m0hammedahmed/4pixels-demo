@@ -1020,3 +1020,38 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .pub-actions .btn { box-shadow: none !important; }
 /* v25f pricing toggle blue */
 .pub .seg.center button.on { background: #0284c7 !important; color: #fff !important; box-shadow: none !important; }
+/* v26 premium polish */
+.pub-head { background: rgba(255,255,255,.92) !important; backdrop-filter: saturate(180%) blur(14px) !important; -webkit-backdrop-filter: saturate(180%) blur(14px) !important; border-bottom: 1px solid #e6edf5 !important; box-shadow: none !important; padding: 0 !important; }
+.pub-head .ph-in { height: 72px; }
+.pub-head .brand-mark { border-radius: 11px; box-shadow: 0 4px 10px rgba(2,132,199,.25); }
+.pub-nav { background: #f1f5f9 !important; border-radius: 12px !important; padding: 4px !important; gap: 2px !important; }
+.pub-nav button { font-size: 14px !important; padding: 8px 15px !important; border-radius: 9px !important; color: #475569 !important; }
+.pub-nav button:hover { background: rgba(255,255,255,.7) !important; color: #0f172a !important; }
+.pub-nav button.on, .pub-nav button.on:hover { background: #fff !important; color: #0369a1 !important; box-shadow: 0 1px 3px rgba(15,23,42,.1) !important; font-weight: 600 !important; }
+@media (max-width: 900px) { .pub-nav { background: transparent !important; padding: 0 !important; } }
+.pub-actions .btn-ghost { border: 0 !important; background: transparent !important; font-weight: 600 !important; color: #0f172a !important; }
+.pub-actions .btn-primary { border-radius: 10px !important; padding: 9px 16px !important; font-weight: 600 !important; background: #0284c7 !important; }
+.pub-actions .lang-btn { border-radius: 10px !important; border-color: #e2e8f0 !important; font-weight: 600 !important; }
+.pw-hero { background: radial-gradient(900px 420px at 80% -10%, #dbeefe 0%, transparent 60%), radial-gradient(600px 300px at 0% 0%, #eaf6ff 0%, transparent 70%), #fff !important; position: relative; }
+.pw-hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#cbd9e8 1px, transparent 1px); background-size: 26px 26px; opacity: .45; -webkit-mask-image: linear-gradient(#000, transparent 80%); mask-image: linear-gradient(#000, transparent 80%); pointer-events: none; }
+.pw-hero-in { position: relative; }
+.pw-hero h1 { letter-spacing: -.035em !important; line-height: 1.06 !important; font-size: clamp(36px, 4.6vw, 58px) !important; }
+.pw-eye { border: 1px solid #bfe3f8; background: #fff !important; box-shadow: 0 1px 2px rgba(2,132,199,.08); }
+.pw-lead { color: #52627a !important; }
+.pw-trust span { color: #475569 !important; }
+.pw-mockwrap { position: relative; }
+.pw-mockwrap .aw { box-shadow: 0 30px 70px -20px rgba(2,60,110,.28), 0 0 0 1px rgba(15,23,42,.05) !important; }
+.pw-float { position: absolute; display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid #e6edf5; border-radius: 14px; padding: 10px 14px; box-shadow: 0 16px 36px -12px rgba(2,60,110,.3); font-size: 13px; z-index: 2; }
+.pw-float b { display: block; color: #0f172a; font-size: 13px; } .pw-float small { color: #64748b; font-size: 11.5px; }
+.pw-float.f1 { left: -34px; bottom: 70px; } .pw-float.f2 { right: -18px; top: -20px; }
+.pw-fdot { width: 30px; height: 30px; border-radius: 9px; background: #dcfce7; position: relative; } .pw-fdot::after { content: '✓'; position: absolute; inset: 0; display: grid; place-items: center; color: #16a34a; font-weight: 700; } .pw-fdot.b { background: #e0f2fe; } .pw-fdot.b::after { color: #0284c7; }
+@media (max-width: 900px) { .pw-float { display: none; } }
+.pw-logos { background: #fff !important; border-top: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; }
+.pw-logos span { color: #94a3b8 !important; letter-spacing: .14em !important; font-weight: 800 !important; }
+.pw-card { transition: transform .2s, box-shadow .2s, border-color .2s; }
+.pw-card:hover { transform: translateY(-3px); border-color: #bfe3f8 !important; box-shadow: 0 18px 36px -18px rgba(2,60,110,.25) !important; }
+.pw-sec-head h2 { letter-spacing: -.025em !important; }
+.pw-alt { background: linear-gradient(#f8fbff, #f4f8fc) !important; }
+.pw-hero .btn-primary.btn-lg { background: #0284c7 !important; box-shadow: 0 10px 22px -8px rgba(2,132,199,.55) !important; border-radius: 12px !important; }
+.pw-hero .btn-ghost.btn-lg { border-radius: 12px !important; }
+[dir=rtl] .pw-float.f1 { left: auto; right: -34px; } [dir=rtl] .pw-float.f2 { right: auto; left: -18px; }
