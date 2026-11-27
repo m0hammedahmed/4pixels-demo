@@ -1055,3 +1055,4 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .pw-hero .btn-primary.btn-lg { background: #0284c7 !important; box-shadow: 0 10px 22px -8px rgba(2,132,199,.55) !important; border-radius: 12px !important; }
 .pw-hero .btn-ghost.btn-lg { border-radius: 12px !important; }
 [dir=rtl] .pw-float.f1 { left: auto; right: -34px; } [dir=rtl] .pw-float.f2 { right: auto; left: -18px; }
+.pw-float.f1 { left: -34px !important; bottom: -26px !important; } [dir=rtl] .pw-float.f1 { left: auto !important; right: -34px !important; }
