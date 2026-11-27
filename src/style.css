@@ -1121,3 +1121,4 @@ table.data tbody tr:hover { background: #f1f5f9; }
 @media (max-width: 900px) { .ab-hero-in { grid-template-columns: 1fr; } .ab-orbit { height: 280px; } .ab-ring.r2 { width: 270px; height: 270px; } .ab-way { grid-template-columns: 1fr 1fr; } .ab-hero { padding: 40px 20px; } .ab-close { margin: 16px 16px 48px; padding: 26px; } }
 @media (prefers-reduced-motion: reduce) { .ab-node { animation: none; } }
 .ab-statement p { font-family: var(--font, "Inter", "Segoe UI", Tahoma, sans-serif) !important; }
+.ab-statement p { font-family: inherit !important; font-weight: 700 !important; }
