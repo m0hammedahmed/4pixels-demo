@@ -137,19 +137,33 @@ function About({ lang, go }: { lang: Lang; go: (p: string) => void }) {
     ['Customer context', 'Every action starts from the customer\u2019s full picture.', 'inbox', 'سياق العميل', 'كل إجراء يبدأ من الصورة الكاملة للعميل.'],
     ['Arabic-first', 'Built for Arabic commerce teams, in Arabic and English.', 'chats', 'عربي أولاً', 'متبني لفرق التجارة العربية، بالعربي والإنجليزي.'],
   ];
-  const areas: [string, string, string[], string, string][] = [
-    ['Turn customer messages into controlled sales work.', 'The team sees the customer, the order, the owner and the next action from one clear inbox.', ['Team WhatsApp inbox', 'Order confirmation', 'Abandoned cart recovery'], 'حوّل رسائل العملاء لشغل مبيعات منظم.', 'الفريق يشوف العميل والأوردر والمسؤول والخطوة الجاية من إنبوكس واحد واضح.'],
-    ['Run orders without chasing.', 'Every order carries its status, shipping and return details.', ['Order tracking', 'Returns control', 'Bosta delivery checks'], 'شغّل الأوردرات من غير مطاردة.', 'كل أوردر معاه حالته وتفاصيل الشحن والمرتجع.'],
-    ['Grow repeat purchases.', 'Offers and retention flows run with clear tracking.', ['Smart Offers', 'Customer retention', 'SMS campaigns'], 'زوّد تكرار الشراء.', 'العروض وتدفقات الاحتفاظ بالعملاء شغالة بمتابعة واضحة.'],
-    ['See the whole picture.', 'Sales, profit and team activity in one operating view.', ['Dashboard', 'Net profit', 'Exact Shopify sales'], 'شوف الصورة كاملة.', 'المبيعات والربح ونشاط الفريق في شاشة تشغيل واحدة.'],
+  const areas: [string, string, string[], string, string, React.ReactNode][] = [
+    ['Turn customer messages into controlled sales work.', 'The team sees the customer, the order, the owner and the next action from one clear inbox.', ['Team WhatsApp inbox', 'Order confirmation', 'Abandoned cart recovery'], 'حوّل رسائل العملاء لشغل مبيعات منظم.', 'الفريق يشوف العميل والأوردر والمسؤول والخطوة الجاية من إنبوكس واضح.', <ShotInbox lang={lang} />],
+    ['Run orders without chasing.', 'Every order carries its status, shipping and return details.', ['Order tracking', 'Returns control', 'Delivery checks'], 'شغّل الأوردرات من غير مطاردة.', 'كل أوردر معاه حالته وتفاصيل الشحن والمرتجع.', <ShotOrders lang={lang} />],
+    ['See the whole picture.', 'Sales, confirmation and team activity in one operating view.', ['Dashboard', 'Net profit', 'Shopify sales'], 'شوف الصورة كاملة.', 'المبيعات والتأكيد ونشاط الفريق في شاشة تشغيل واحدة.', <ShotStats lang={lang} />],
+  ];
+  const way: [string, string, string, string][] = [
+    ['Listen', 'We start from how your team works today.', 'نسمع', 'بنبدأ من طريقة شغل فريقك النهارده.'],
+    ['Connect', 'Shopify and WhatsApp are linked to one workspace.', 'نربط', 'Shopify وواتساب بيتربطوا بمساحة واحدة.'],
+    ['Simplify', 'Routine steps are automated, the rest stays in your hands.', 'نبسّط', 'الخطوات الروتينية بتتأتمت والباقي في إيدك.'],
+    ['Improve', 'We refine with your feedback, one change at a time.', 'نحسّن', 'بنطوّر بملاحظاتك، تغيير ورا تغيير.'],
   ];
   return (<>
-    <PageHero lang={lang} eye={tr(lang, 'About us', 'من نحن')} h1="We keep store operations simple." arH1="بنخلي تشغيل المتاجر بسيط." lead="4Pixels brings conversations, orders, customers, marketing, loyalty and analytics into one clear operating workspace." arLead="4Pixels يجمع المحادثات والأوردرات والعملاء والتسويق والولاء والتحليلات في مساحة تشغيل واحدة واضحة." />
-    <section className="pw-sec"><div className="pw-sec-head"><h2>{tr(lang, 'A simple idea: keep the whole operation visible.', 'فكرة بسيطة: خلّي كل العملية قدام عينك.')}</h2></div>
+    <section className="ab-hero"><div className="ab-hero-in">
+      <div><Eyebrow>{tr(lang, 'About us', 'من نحن')}</Eyebrow>
+        <h1>{tr(lang, 'We make running an online store feel calm.', 'بنخلّي تشغيل المتجر الأونلاين مريح.')}</h1>
+        <p className="pw-lead">{tr(lang, '4Pixels brings conversations, orders, customers and analytics into one clear workspace, so your team spends time on customers instead of chasing tools.', '4Pixels بيجمع المحادثات والأوردرات والعملاء والتحليلات في مساحة واضحة، ففريقك يشتغل على العملاء بدل ما يجري ورا الأدوات.')}</p>
+        <div className="btn-row"><button className="btn btn-primary btn-lg" onClick={() => go('contact')}>{tr(lang, 'Talk to us', 'كلمنا')}</button><button className="btn btn-ghost btn-lg" onClick={() => go('features')}>{tr(lang, 'See the features', 'شوف المميزات')}</button></div></div>
+      <div className="ab-orbit"><div className="ab-core">4P</div>{[['Shopify', 'a'], ['WhatsApp', 'b'], ['Orders', 'c'], ['Customers', 'd']].map(([n, k]) => <span key={k} className={`ab-node ${k}`}>{tr(lang, n, ({ Shopify: 'Shopify', WhatsApp: 'واتساب', Orders: 'الأوردرات', Customers: 'العملاء' } as Record<string, string>)[n])}</span>)}<i className="ab-ring r1" /><i className="ab-ring r2" /></div>
+    </div></section>
+    <section className="ab-statement"><p>{tr(lang, '\u201CA store runs best when the whole operation is visible to the whole team.\u201D', '\u201Cالمتجر بيشتغل أحسن لما العملية كلها تكون قدام الفريق كله.\u201D')}</p><small>{tr(lang, 'How we think about the product', 'إزاي بنفكر في المنتج')}</small></section>
+    <section className="pw-sec"><div className="pw-sec-head"><Eyebrow>{tr(lang, 'What we believe', 'بنؤمن بإيه')}</Eyebrow><h2>{tr(lang, 'Four principles behind every screen.', 'أربع مبادئ ورا كل شاشة.')}</h2></div>
       <div className="pw-grid4">{values.map(([t, d, ic, art, ard]) => <div className="pw-card" key={t}><span className="pw-ic"><I n={ic} size={20} /></span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p></div>)}</div></section>
-    <section className="pw-sec pw-alt"><div className="pw-sec-head"><h2>{tr(lang, 'Four clear areas running the store.', 'أربع مناطق واضحة بتشغّل المتجر.')}</h2></div>
-      <div className="pw-areas">{areas.map(([t, d, l, art, ard], i) => <div className="pw-area" key={t}><span className="pw-num">0{i + 1}</span><div><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p><div className="chip-row">{l.map(x => <span className="chip blue" key={x}>{x}</span>)}</div></div></div>)}</div></section>
-    <CTA lang={lang} go={go} /></>);
+    <section className="pw-sec pw-alt"><div className="pw-sec-head"><Eyebrow>{tr(lang, 'What we build', 'بنبني إيه')}</Eyebrow><h2>{tr(lang, 'Three areas that run the store.', 'ثلاث مناطق بتشغّل المتجر.')}</h2><p>{tr(lang, 'Illustrative screens with sample data.', 'شاشات توضيحية ببيانات تجريبية.')}</p></div>
+      <div className="pw-show">{areas.map(([t, d, l, art, ard, shot], i) => <div className={`pw-show-row${i % 2 ? ' rev' : ''}`} key={t}><div className="pw-show-txt"><span className="pw-num">0{i + 1}</span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p><div className="chip-row">{l.map(x => <span className="chip blue" key={x}>{x}</span>)}</div></div><div className="pw-show-shot">{shot}</div></div>)}</div></section>
+    <section className="pw-sec"><div className="pw-sec-head"><Eyebrow>{tr(lang, 'How we work', 'إزاي بنشتغل')}</Eyebrow><h2>{tr(lang, 'A simple way of working with you.', 'طريقة شغل بسيطة معاك.')}</h2></div>
+      <div className="ab-way">{way.map(([t, d, art, ard], i) => <div key={t}><span className="ab-wn">{i + 1}</span><h3>{tr(lang, t, art)}</h3><p>{tr(lang, d, ard)}</p></div>)}</div></section>
+    <section className="ab-close"><div><h2>{tr(lang, 'Want to see it with your own store in mind?', 'عاوز تشوفه على متجرك إنت؟')}</h2><p>{tr(lang, 'Tell us how your team works and we will show you around.', 'قولنا فريقك بيشتغل إزاي وهنوريك المنتج.')}</p></div><div className="btn-row"><button className="btn btn-primary btn-lg" onClick={() => go('contact')}>{tr(lang, 'Contact us', 'تواصل معنا')}</button><button className="btn btn-ghost btn-lg" onClick={() => go('projects')}>{tr(lang, 'See our work', 'شوف شغلنا')}</button></div></section></>);
 }
 
 function Features({ lang, go }: { lang: Lang; go: (p: string) => void }) {
