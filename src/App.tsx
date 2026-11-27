@@ -216,17 +216,12 @@ function Shell(props: {
     { g: 'workspace', items: [
       { k: 'chat', page: 'chats', icon: 'chats', badge: '3' },
       { k: 'dashboard', page: 'overview', icon: 'overview' },
-      { k: 'sales', page: 'sales', icon: 'shopify', badge: 'EXACT' },
       { k: 'orders', page: 'orders', icon: 'orders' },
       { k: 'customers', page: 'customers', icon: 'inbox' },
     ] },
     { g: 'growth', items: [
-      { k: 'carts', page: 'carts', icon: 'cart' },
       { k: 'marketing', page: 'templates', icon: 'templates' },
       { k: 'sms', page: 'sms', icon: 'sms' },
-      { k: 'offers', page: 'automations', icon: 'auto' },
-      { k: 'retention', page: 'retention', icon: 'retention' },
-      { k: 'loyaltyR', page: 'loyalty', icon: 'loyalty' },
     ] },
     { g: 'account', items: [
       { k: 'billing', page: 'billing', icon: 'profit' },
