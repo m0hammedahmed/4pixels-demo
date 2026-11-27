@@ -1120,3 +1120,4 @@ table.data tbody tr:hover { background: #f1f5f9; }
 .ab-close { max-width: 1100px; margin: 24px auto 80px; padding: 36px 40px; border: 1px solid #bfe3f8; background: linear-gradient(135deg, #f3faff, #fff); border-radius: 22px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; } .ab-close h2 { margin: 0 0 6px; letter-spacing: -.02em; } .ab-close p { margin: 0; color: #52627a; }
 @media (max-width: 900px) { .ab-hero-in { grid-template-columns: 1fr; } .ab-orbit { height: 280px; } .ab-ring.r2 { width: 270px; height: 270px; } .ab-way { grid-template-columns: 1fr 1fr; } .ab-hero { padding: 40px 20px; } .ab-close { margin: 16px 16px 48px; padding: 26px; } }
 @media (prefers-reduced-motion: reduce) { .ab-node { animation: none; } }
+.ab-statement p { font-family: var(--font, "Inter", "Segoe UI", Tahoma, sans-serif) !important; }
