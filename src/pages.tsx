@@ -73,7 +73,7 @@ export function DashboardPage({ lang, showToast, go }: P) {
   const maxN = Math.max(1, ...days.map(d => d.n));
   const recent = [...scoped].sort((a, b) => b.date - a.date).slice(0, 5);
   const top = products.slice(0, 5); const topMax = Math.max(1, ...top.map(p => mode === 'revenue' ? p.value : p.qty));
-  const steps: [string, string, string, string][] = [['1', 'Connect Shopify', 'Link your store so orders flow in', 'settings'], ['2', 'Connect WhatsApp', 'Pair the number customers will hear from', 'settings'], ['3', 'Set up messages', 'Approve confirmation and follow-up templates', 'templates'], ['4', 'Turn on Smart Offers', 'Start tracked upsell after each order', 'automations']];
+  const steps: [string, string, string, string][] = [['1', 'Connect Shopify', 'Link your store so orders flow in', 'settings'], ['2', 'Connect WhatsApp', 'Pair the number customers will hear from', 'settings'], ['3', 'Set up messages', 'Approve confirmation and follow-up templates', 'templates'], ['4', 'Send your first SMS', 'Reach customers who are not on WhatsApp', 'sms']];
   return (
     <div className="dash">
       <div className="card card-pad dash-bar">
